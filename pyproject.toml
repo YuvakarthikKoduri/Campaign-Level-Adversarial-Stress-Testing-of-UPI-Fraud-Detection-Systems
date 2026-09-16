@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "upi-fraud-stress-lab"
+version = "0.1.0"
+description = "Campaign-Level Adversarial Stress Testing of UPI Fraud Detection Systems"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    {name = "UPI Fraud Stress Lab Team"}
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "black", "flake8"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
