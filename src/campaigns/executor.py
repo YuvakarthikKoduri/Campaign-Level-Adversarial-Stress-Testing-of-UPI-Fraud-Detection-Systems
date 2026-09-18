@@ -83,18 +83,8 @@ class CampaignExecutor:
             # Add timestamp
             transaction['timestamp'] = datetime.now().isoformat()
 
-            # Detector evaluates transaction
-            try:
-                risk_score = self.detector.risk_score(transaction)
-            except Exception as e:
-                # If detector fails, assume high risk
-                risk_score = 1.0
-
-            # Environment makes decision based on thresholds
-            response = self.environment.process_transaction(
-                transaction,
-                risk_score
-            )
+            # Environment evaluates and decides (uses its internal detector)
+            response = self.environment.process_transaction(transaction)
 
             # Add response details to transaction
             transaction.update(response)

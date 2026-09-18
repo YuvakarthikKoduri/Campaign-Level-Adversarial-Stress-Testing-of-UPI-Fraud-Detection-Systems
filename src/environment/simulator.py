@@ -204,24 +204,13 @@ class UPIEnvironment:
                 "details": f"Invalid transaction data: {str(e)}"
             }
 
-        # Validate VPAs exist
-        if transaction.from_vpa not in self.vpas:
-            return {
-                "transaction_id": transaction.transaction_id,
-                "risk_score": None,
-                "decision": "BLOCK",
-                "status": "failed",
-                "details": f"Sender VPA {transaction.from_vpa} not found"
-            }
-
-        if transaction.to_vpa not in self.vpas:
-            return {
-                "transaction_id": transaction.transaction_id,
-                "risk_score": None,
-                "decision": "BLOCK",
-                "status": "failed",
-                "details": f"Receiver VPA {transaction.to_vpa} not found"
-            }
+        # Auto-register unknown VPAs so campaigns work without manual setup
+        for vpa_id in [transaction.from_vpa, transaction.to_vpa]:
+            if vpa_id not in self.vpas:
+                acct_id = f"acct_{vpa_id.replace('@', '_').replace('.', '_')}"
+                if acct_id not in self.accounts:
+                    self.create_account(acct_id, initial_balance=500000.0)
+                self.create_vpa(vpa_id, acct_id, vpa_id)
 
         # Get accounts
         sender_account = self.get_account_by_vpa(transaction.from_vpa)
