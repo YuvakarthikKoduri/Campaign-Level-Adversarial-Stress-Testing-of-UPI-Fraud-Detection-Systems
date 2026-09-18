@@ -1,0 +1,12 @@
+{
+  "experiment_id": "S1_reproducibility_test",
+  "timestamp": "2026-09-18T14:08:40.453504",
+  "random_seed": 42,
+  "detector_model": "baseline_xgboost.pkl",
+  "campaign_type": "known",
+  "attacker_type": "static",
+  "num_campaigns": 10,
+  "target_amount": 30000,
+  "max_steps": 50,
+  "accounts": 20
+}

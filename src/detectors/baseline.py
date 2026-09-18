@@ -92,31 +92,6 @@ class BaselineDetector:
         if isinstance(transaction, dict):
             transaction = pd.DataFrame([transaction])
 
-        # If model expects UPI features but they aren't explicitly in the dict/DF, extract them
-        if set(self.feature_names) == {'amount', 'hour_of_day', 'velocity_1h', 'is_new_vpa'}:
-            for col in self.feature_names:
-                if col not in transaction.columns:
-                    if col == 'amount':
-                        # Amount should already be there
-                        pass
-                    elif col == 'hour_of_day':
-                        transaction[col] = transaction.get('timestamp', pd.Series([pd.Timestamp.now().isoformat()] * len(transaction)))
-                        transaction[col] = pd.to_datetime(transaction[col]).dt.hour
-                    elif col == 'velocity_1h':
-                        # Mock velocity: higher for higher amounts as a simple heuristic for unknown transactions
-                        transaction[col] = (transaction['amount'] > 10000).astype(int) * 5 + 1
-                        if 'features' in transaction.columns and len(transaction) == 1:
-                            fts = transaction['features'].iloc[0]
-                            if isinstance(fts, dict) and 'velocity_1h' in fts:
-                                transaction[col] = fts['velocity_1h']
-                    elif col == 'is_new_vpa':
-                        # Mock: Assume vpa is new if there is no historical context given
-                        transaction[col] = 1
-                        if 'features' in transaction.columns and len(transaction) == 1:
-                            fts = transaction['features'].iloc[0]
-                            if isinstance(fts, dict) and 'is_new_vpa' in fts:
-                                transaction[col] = fts['is_new_vpa']
-
         # Ensure all required features are present
         missing_features = set(self.feature_names) - set(transaction.columns)
         if missing_features:

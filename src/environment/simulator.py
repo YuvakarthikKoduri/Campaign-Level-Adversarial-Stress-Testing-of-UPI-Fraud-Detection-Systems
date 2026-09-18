@@ -160,9 +160,12 @@ class UPIEnvironment:
             return risk_score, risk_factors
         else:
             # Use provided fraud detector
-            # Expected interface: predict(transaction_dict) -> (risk_score, factors)
+            # Prepare features for the model
             try:
-                result = self.fraud_detector.predict(transaction.to_dict())
+                # Compute UPI features from transaction context
+                features = self._compute_upi_features(transaction)
+
+                result = self.fraud_detector.predict(features)
                 if isinstance(result, tuple):
                     return result
                 else:
@@ -170,6 +173,41 @@ class UPIEnvironment:
             except Exception as e:
                 logger.error(f"Fraud detector error: {e}")
                 return 0.5, ["detector_error"]
+
+    def _compute_upi_features(self, transaction: Transaction) -> Dict:
+        """
+        Compute UPI-specific features for fraud detection.
+
+        Args:
+            transaction: Transaction to compute features for
+
+        Returns:
+            Dictionary with features: amount, hour_of_day, velocity_1h, is_new_vpa
+        """
+        # Get basic features
+        amount = transaction.amount
+        hour_of_day = transaction.timestamp.hour
+
+        # Compute velocity (transactions in last hour from this VPA)
+        one_hour_ago = transaction.timestamp.timestamp() - 3600
+        recent_from_vpa = [
+            t for t in self.transactions
+            if t.from_vpa == transaction.from_vpa
+            and t.timestamp.timestamp() > one_hour_ago
+        ]
+        velocity_1h = len(recent_from_vpa)
+
+        # Check if VPA is new (not in our registered VPAs)
+        is_new_vpa = 0
+        if transaction.from_vpa not in self.vpas:
+            is_new_vpa = 1
+
+        return {
+            "amount": amount,
+            "hour_of_day": hour_of_day,
+            "velocity_1h": velocity_1h,
+            "is_new_vpa": is_new_vpa
+        }
 
     def process_transaction(self, transaction_data: Dict) -> Dict:
         """

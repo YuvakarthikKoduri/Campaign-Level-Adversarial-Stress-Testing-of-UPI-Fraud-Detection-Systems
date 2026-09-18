@@ -1,0 +1,73 @@
+═══════════════════════════════════════════════════════════════
+TRANSFER YOUR PROJECT - SIMPLEST METHOD
+═══════════════════════════════════════════════════════════════
+
+YOU HAVE 3 SIMPLE OPTIONS:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPTION 1: USB DRIVE (Easiest) ⭐
+
+1. Current laptop:
+   • Plug in USB drive
+   • Find mount point: lsblk
+   • Run: ./transfer_to_usb.sh /media/YOUR_USB_PATH
+
+2. Target laptop:
+   • Plug in USB
+   • Copy: cp -r /media/usb/upi-fraud-stress-lab ~/
+   • Go to: cd ~/upi-fraud-stress-lab
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPTION 2: Network (If both on same WiFi)
+
+1. Target laptop - get IP:
+   hostname -I
+
+2. Current laptop - transfer:
+   rsync -avh --progress --exclude='venv' \
+       /home/yuvakarthik-koduri/upi-fraud-stress-lab \
+       username@TARGET_IP:~/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPTION 3: GitHub (If you have a repo)
+
+1. Current laptop:
+   git push
+
+2. Target laptop:
+   git clone YOUR_REPO_URL
+   cd upi-fraud-stress-lab
+
+═══════════════════════════════════════════════════════════════
+
+AFTER TRANSFER - ON YOUR 12GB TARGET LAPTOP:
+
+cd ~/upi-fraud-stress-lab
+
+# 1. Verify (30 seconds)
+python3 verify_setup.py
+
+# 2. Setup (5 minutes)
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# 3. TRAIN MODEL (5-7 minutes) ← THE KEY STEP
+python train_lightweight.py
+
+# 4. Run demo (instant)
+python demo.py
+
+# 5. Run experiments (30 minutes)
+python run_experiment.py --scenario S4
+
+═══════════════════════════════════════════════════════════════
+
+THAT'S IT! Total time: ~1 hour to working demo
+
+Your 12GB laptop is perfect - no GPU needed!
+
+═══════════════════════════════════════════════════════════════

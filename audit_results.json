@@ -1,0 +1,44 @@
+{
+  "comparison_fairness": {
+    "fair_targets": true,
+    "fair_types": true,
+    "adaptive_has_state": true,
+    "adaptive_tracks_feedback": true
+  },
+  "campaign_families": {
+    "families_count": 4,
+    "unique_families": 4,
+    "families": [
+      {
+        "name": "HIGH_VALUE_BURST",
+        "family": "high_value_burst",
+        "target": 30000
+      },
+      {
+        "name": "SLOW_DRAIN",
+        "family": "slow_drain",
+        "target": 15000
+      },
+      {
+        "name": "GRADUAL_ESCALATION",
+        "family": "gradual_escalation",
+        "target": 20000
+      },
+      {
+        "name": "BENEFICIARY_HOPPING",
+        "family": "beneficiary_hopping",
+        "target": 18000
+      }
+    ]
+  },
+  "adaptive_state": {
+    "tracks_allowed": true,
+    "tracks_blocked": true,
+    "learns_safe_regions": true,
+    "adaptation_count": 1
+  },
+  "metrics": {
+    "results_dir_exists": true,
+    "result_files_count": 5
+  }
+}

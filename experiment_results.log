@@ -1,0 +1,92 @@
+============================================================
+UPI FRAUD STRESS LAB - EXPERIMENT RUNNER
+============================================================
+
+Loading trained detector...
+Model loaded from models/baseline_xgboost.pkl
+Features: 4
+Detector loaded successfully
+
+Running ALL scenarios with 100 campaigns each...
+
+Running all scenarios...
+Campaigns per scenario: 100
+
+Running S1: Known + Static...
+Running S2: Known + Adaptive...
+Running S3: Unknown + Static...
+Running S4: Unknown + Adaptive (PRIMARY STRESS TEST)...
+Saved S1 results to results/metrics/S1_results.json
+Saved S2 results to results/metrics/S2_results.json
+Saved S3 results to results/metrics/S3_results.json
+Saved S4 results to results/metrics/S4_results.json
+
+================================================================================
+SCENARIO COMPARISON
+================================================================================
+
+Metric                         S1           S2           S3           S4          
+--------------------------------------------------------------------------------
+Campaign Success Rate          4.0%         0.0%         0.0%         0.0%        
+Avg Detection Time (s)         0.00         0.00         0.00         0.00        
+Avg Intervention Time (s)      0.01         0.00         0.00         0.01        
+Avg Financial Exposure         ₹4,864       ₹0           ₹0           ₹0          
+Total Exposure                 ₹486,406     ₹0           ₹0           ₹0          
+================================================================================
+
+
+============================================================
+RESULTS SUMMARY
+============================================================
+
+S1:
+  scenario: S1: Known + Static
+  num_campaigns: 100
+  campaign_success_rate: 0.0400
+  avg_detection_time_sec: 0.0036
+  avg_intervention_time_sec: 0.0072
+  avg_financial_exposure: 4864.0612
+  total_financial_exposure: 486406.1200
+  successful_campaigns: 4
+  blocked_campaigns: 96
+  detected_campaigns: 100
+
+S2:
+  scenario: S2: Known + Adaptive
+  num_campaigns: 100
+  campaign_success_rate: 0.0000
+  avg_detection_time_sec: 0.0019
+  avg_intervention_time_sec: 0.0019
+  avg_financial_exposure: 0.0000
+  total_financial_exposure: 0.0000
+  successful_campaigns: 0
+  blocked_campaigns: 100
+  detected_campaigns: 100
+
+S3:
+  scenario: S3: Unknown + Static
+  num_campaigns: 100
+  campaign_success_rate: 0.0000
+  avg_detection_time_sec: 0.0018
+  avg_intervention_time_sec: 0.0025
+  avg_financial_exposure: 0.0000
+  total_financial_exposure: 0.0000
+  successful_campaigns: 0
+  blocked_campaigns: 100
+  detected_campaigns: 100
+
+S4:
+  scenario: S4: Unknown + Adaptive
+  num_campaigns: 100
+  campaign_success_rate: 0.0000
+  avg_detection_time_sec: 0.0020
+  avg_intervention_time_sec: 0.0075
+  avg_financial_exposure: 0.0000
+  total_financial_exposure: 0.0000
+  successful_campaigns: 0
+  blocked_campaigns: 100
+  detected_campaigns: 100
+
+============================================================
+Experiment complete!
+============================================================
