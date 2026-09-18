@@ -165,6 +165,10 @@ class UPIEnvironment:
                 # Compute UPI features from transaction context
                 features = self._compute_upi_features(transaction)
 
+                # Store features in transaction for debugging
+                for key, value in features.items():
+                    transaction.add_feature(key, value)
+
                 result = self.fraud_detector.predict(features)
                 if isinstance(result, tuple):
                     return result
@@ -295,7 +299,8 @@ class UPIEnvironment:
                 "risk_score": risk_score,
                 "decision": decision.value,
                 "status": "blocked",
-                "details": f"Transaction blocked due to high risk. Factors: {risk_factors}"
+                "details": f"Transaction blocked due to high risk. Factors: {risk_factors}",
+                "features": transaction.features  # Include computed features
             }
 
         elif decision == RiskDecision.FLAG:
@@ -312,7 +317,8 @@ class UPIEnvironment:
                     "risk_score": risk_score,
                     "decision": decision.value,
                     "status": "success",
-                    "details": f"Transaction flagged for review. Factors: {risk_factors}"
+                    "details": f"Transaction flagged for review. Factors: {risk_factors}",
+                    "features": transaction.features  # Include computed features
                 }
 
         else:  # ALLOW
@@ -329,7 +335,8 @@ class UPIEnvironment:
                     "risk_score": risk_score,
                     "decision": decision.value,
                     "status": "success",
-                    "details": "Transaction processed successfully"
+                    "details": "Transaction processed successfully",
+                    "features": transaction.features  # Include computed features
                 }
 
         # Should not reach here

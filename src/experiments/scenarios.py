@@ -55,7 +55,8 @@ class ExperimentScenarios:
         self,
         num_campaigns: int = 100,
         accounts: List[str] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        seed: int = 42
     ) -> Dict:
         """
         S1: Known Fraud + Static Attacker
@@ -78,7 +79,8 @@ class ExperimentScenarios:
             completed_campaign = executor.execute_campaign(
                 campaign,
                 accounts,
-                verbose=verbose and i == 0  # Verbose only for first
+                verbose=verbose and i == 0,  # Verbose only for first
+                seed=seed + i  # Unique seed per campaign for reproducible timing
             )
             campaigns.append(completed_campaign)
 
@@ -89,7 +91,8 @@ class ExperimentScenarios:
         self,
         num_campaigns: int = 100,
         accounts: List[str] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        seed: int = 42
     ) -> Dict:
         """
         S2: Known Fraud + Adaptive Attacker
@@ -112,7 +115,8 @@ class ExperimentScenarios:
             completed_campaign = executor.execute_campaign(
                 campaign,
                 accounts,
-                verbose=verbose and i == 0
+                verbose=verbose and i == 0,
+                seed=seed + i  # Unique seed per campaign
             )
             campaigns.append(completed_campaign)
 
@@ -123,7 +127,8 @@ class ExperimentScenarios:
         self,
         num_campaigns: int = 100,
         accounts: List[str] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        seed: int = 42
     ) -> Dict:
         """
         S3: Unknown Fraud + Static Attacker
@@ -146,7 +151,8 @@ class ExperimentScenarios:
             completed_campaign = executor.execute_campaign(
                 campaign,
                 accounts,
-                verbose=verbose and i == 0
+                verbose=verbose and i == 0,
+                seed=seed + i  # Unique seed per campaign
             )
             campaigns.append(completed_campaign)
 
@@ -157,7 +163,8 @@ class ExperimentScenarios:
         self,
         num_campaigns: int = 100,
         accounts: List[str] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        seed: int = 42
     ) -> Dict:
         """
         S4: Unknown Fraud + Adaptive Attacker
@@ -181,7 +188,8 @@ class ExperimentScenarios:
             completed_campaign = executor.execute_campaign(
                 campaign,
                 accounts,
-                verbose=verbose and i == 0
+                verbose=verbose and i == 0,
+                seed=seed + i  # Unique seed per campaign
             )
             campaigns.append(completed_campaign)
 
@@ -192,7 +200,8 @@ class ExperimentScenarios:
         self,
         num_campaigns: int = 100,
         save_results: bool = True,
-        detector_name: str = "XGBoost"
+        detector_name: str = "XGBoost",
+        seed: int = 42
     ) -> Dict[str, Dict]:
         """
         Run all four scenarios and compare results.
@@ -201,6 +210,7 @@ class ExperimentScenarios:
             num_campaigns: Number of campaigns per scenario
             save_results: Save results to JSON files
             detector_name: Name of detector for result naming
+            seed: Random seed for reproducibility
 
         Returns:
             Dictionary with results for all scenarios
@@ -213,16 +223,16 @@ class ExperimentScenarios:
         results = {}
 
         print("Running S1: Known + Static...")
-        results['S1'] = self.run_scenario_s1(num_campaigns, accounts)
+        results['S1'] = self.run_scenario_s1(num_campaigns, accounts, seed=seed)
 
         print("Running S2: Known + Adaptive...")
-        results['S2'] = self.run_scenario_s2(num_campaigns, accounts)
+        results['S2'] = self.run_scenario_s2(num_campaigns, accounts, seed=seed)
 
         print("Running S3: Unknown + Static...")
-        results['S3'] = self.run_scenario_s3(num_campaigns, accounts)
+        results['S3'] = self.run_scenario_s3(num_campaigns, accounts, seed=seed)
 
         print("Running S4: Unknown + Adaptive (PRIMARY STRESS TEST)...")
-        results['S4'] = self.run_scenario_s4(num_campaigns, accounts)
+        results['S4'] = self.run_scenario_s4(num_campaigns, accounts, seed=seed)
 
         if save_results:
             self._save_results(results, detector_name=detector_name)
