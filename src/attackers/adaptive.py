@@ -45,6 +45,8 @@ class AdaptiveAttacker:
         self.fraud_type = fraud_type
         self.step = 0
         self.history = []
+        self.timer = None  # Set by campaign execution
+        self.vpa_selector = None  # Set by campaign execution
 
         # Adaptive parameters
         self.current_amount_multiplier = 1.0
@@ -112,7 +114,11 @@ class AdaptiveAttacker:
             amount = amount * random.uniform(0.9, 1.1)
 
         # ENHANCED: Strategic beneficiary selection
-        from_account = random.choice(accounts)
+        # Use VPA selector for source if available, otherwise random
+        if self.vpa_selector:
+            from_account = self.vpa_selector.select_source_vpa()
+        else:
+            from_account = random.choice(accounts)
 
         if self.safe_beneficiaries and random.random() < 0.4:
             # Sometimes reuse beneficiaries that worked
@@ -132,6 +138,10 @@ class AdaptiveAttacker:
             "campaign_id": campaign.campaign_id,
             "step": self.step
         }
+
+        # Add timestamp if timer is available
+        if self.timer:
+            transaction["timestamp"] = self.timer.next_transaction_time()
 
         return transaction
 

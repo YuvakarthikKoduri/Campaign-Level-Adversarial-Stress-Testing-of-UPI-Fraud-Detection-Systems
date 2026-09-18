@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from enum import Enum
 
+from src.campaigns.vpa_strategy import VPAStrategy
+
 
 class CampaignStatus(Enum):
     """Campaign status."""
@@ -45,7 +47,8 @@ class Campaign:
         objective: str,
         target_amount: float,
         fraud_type: str = "known",
-        family: Optional[CampaignFamily] = None
+        family: Optional[CampaignFamily] = None,
+        vpa_strategy: Optional[VPAStrategy] = None
     ):
         self.campaign_id = campaign_id
         self.attacker_id = attacker_id
@@ -53,6 +56,7 @@ class Campaign:
         self.target_amount = target_amount
         self.fraud_type = fraud_type  # "known" or "unknown"
         self.family = family  # Campaign behavioral family
+        self.vpa_strategy = vpa_strategy  # Source VPA selection strategy
         self.transactions = []
         self.status = CampaignStatus.ACTIVE
         self.total_amount_moved = 0.0
@@ -108,6 +112,7 @@ class Campaign:
             "target_amount": self.target_amount,
             "fraud_type": self.fraud_type,
             "family": self.family.value if self.family else None,
+            "vpa_strategy": self.vpa_strategy.value if self.vpa_strategy else None,
             "status": self.status.value,
             "total_amount_moved": self.total_amount_moved,
             "total_amount_blocked": self.total_amount_blocked,
@@ -128,7 +133,8 @@ class CampaignGenerator:
     def create_known_fraud_campaign(
         self,
         target_amount: float = None,
-        attacker_id: Optional[str] = None
+        attacker_id: Optional[str] = None,
+        vpa_strategy: Optional[VPAStrategy] = None
     ) -> Campaign:
         """
         Create a known fraud campaign.
@@ -140,6 +146,7 @@ class CampaignGenerator:
 
         Default target: ₹30,000 (achievable in 1-3 successful transactions)
         Family: HIGH_VALUE_BURST
+        Default VPA strategy: SINGLE_COMPROMISED_VPA
         """
         if target_amount is None:
             # Realistic target: 1-3 successful high-value transactions
@@ -149,13 +156,18 @@ class CampaignGenerator:
         if attacker_id is None:
             attacker_id = f"attacker_{uuid.uuid4().hex[:8]}"
 
+        if vpa_strategy is None:
+            # Default: compromised account model (matches training fraud)
+            vpa_strategy = VPAStrategy.SINGLE_COMPROMISED_VPA
+
         campaign = Campaign(
             campaign_id=f"known_{uuid.uuid4().hex[:8]}",
             attacker_id=attacker_id,
             objective="Move funds using known fraud patterns",
             target_amount=target_amount,
             fraud_type="known",
-            family=CampaignFamily.HIGH_VALUE_BURST
+            family=CampaignFamily.HIGH_VALUE_BURST,
+            vpa_strategy=vpa_strategy
         )
 
         self.campaigns.append(campaign)
@@ -164,7 +176,8 @@ class CampaignGenerator:
     def create_unknown_fraud_campaign(
         self,
         target_amount: float = None,
-        attacker_id: Optional[str] = None
+        attacker_id: Optional[str] = None,
+        vpa_strategy: Optional[VPAStrategy] = None
     ) -> Campaign:
         """
         Create an unknown fraud campaign.
@@ -177,6 +190,7 @@ class CampaignGenerator:
 
         Default target: ₹15,000 (achievable in multiple successful transactions)
         Family: Random selection from unknown families
+        Default VPA strategy: MIXED_REUSE
         """
         import random
 
@@ -185,6 +199,10 @@ class CampaignGenerator:
 
         if attacker_id is None:
             attacker_id = f"attacker_{uuid.uuid4().hex[:8]}"
+
+        if vpa_strategy is None:
+            # Default: mixed reuse (some source repetition, some diversity)
+            vpa_strategy = VPAStrategy.MIXED_REUSE
 
         # Randomly select one of the three unknown families
         unknown_families = [
@@ -200,7 +218,8 @@ class CampaignGenerator:
             objective="Move funds using previously unseen patterns",
             target_amount=target_amount,
             fraud_type="unknown",
-            family=selected_family
+            family=selected_family,
+            vpa_strategy=vpa_strategy
         )
 
         self.campaigns.append(campaign)

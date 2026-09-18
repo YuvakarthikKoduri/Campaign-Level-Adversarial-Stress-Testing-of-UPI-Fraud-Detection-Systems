@@ -27,6 +27,8 @@ class GradualEscalationAttacker:
         self.fraud_type = fraud_type
         self.step = 0
         self.history = []
+        self.timer = None  # Set by campaign execution
+        self.vpa_selector = None  # Set by campaign execution
 
         # Escalation state
         self.current_amount = 500  # Start very small
@@ -52,7 +54,12 @@ class GradualEscalationAttacker:
             return None
 
         # Pick accounts
-        from_account = random.choice(accounts)
+        # Use VPA selector for source if available
+        if self.vpa_selector:
+            from_account = self.vpa_selector.select_source_vpa()
+        else:
+            from_account = random.choice(accounts)
+
         to_account = random.choice([a for a in accounts if a != from_account])
 
         # Add small randomness to current amount
@@ -66,6 +73,10 @@ class GradualEscalationAttacker:
             "campaign_id": campaign.campaign_id,
             "step": self.step
         }
+
+        # Add timestamp if timer is available
+        if self.timer:
+            transaction["timestamp"] = self.timer.next_transaction_time()
 
         return transaction
 
@@ -121,6 +132,8 @@ class BeneficiaryHoppingAttacker:
         self.fraud_type = fraud_type
         self.step = 0
         self.history = []
+        self.timer = None  # Set by campaign execution
+        self.vpa_selector = None  # Set by campaign execution
 
         # Hopping state
         self.beneficiary_use_count = {}  # Track uses per beneficiary
@@ -144,7 +157,11 @@ class BeneficiaryHoppingAttacker:
             return None
 
         # Pick from account
-        from_account = random.choice(accounts)
+        # Use VPA selector for source if available
+        if self.vpa_selector:
+            from_account = self.vpa_selector.select_source_vpa()
+        else:
+            from_account = random.choice(accounts)
 
         # Pick FRESH beneficiary (minimize reuse)
         unused_beneficiaries = [
@@ -170,6 +187,10 @@ class BeneficiaryHoppingAttacker:
             "campaign_id": campaign.campaign_id,
             "step": self.step
         }
+
+        # Add timestamp if timer is available
+        if self.timer:
+            transaction["timestamp"] = self.timer.next_transaction_time()
 
         return transaction
 

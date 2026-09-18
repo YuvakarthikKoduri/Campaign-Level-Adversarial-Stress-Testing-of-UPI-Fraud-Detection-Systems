@@ -4,6 +4,7 @@ Static attacker - follows a fixed strategy.
 Does not adapt to detector responses.
 """
 from typing import Dict, List, Optional
+from datetime import datetime
 import random
 
 
@@ -23,6 +24,8 @@ class StaticAttacker:
         """
         self.fraud_type = fraud_type
         self.step = 0
+        self.timer = None  # Set by campaign execution
+        self.vpa_selector = None  # Set by campaign execution
 
     def choose_action(
         self,
@@ -64,17 +67,27 @@ class StaticAttacker:
         """
         amount = random.uniform(10000, 50000)
 
-        # Pick random accounts
-        from_account = random.choice(accounts)
+        # Use VPA selector if available, otherwise random
+        if self.vpa_selector:
+            from_account = self.vpa_selector.select_source_vpa()
+        else:
+            from_account = random.choice(accounts)
+
         to_account = random.choice([a for a in accounts if a != from_account])
 
-        return {
+        transaction = {
             "from_vpa": from_account,
             "to_vpa": to_account,
             "amount": round(amount, 2),
             "campaign_id": campaign.campaign_id,
             "step": self.step
         }
+
+        # Add timestamp if timer is available
+        if self.timer:
+            transaction["timestamp"] = self.timer.next_transaction_time()
+
+        return transaction
 
     def _unknown_fraud_transaction(
         self,
@@ -91,17 +104,27 @@ class StaticAttacker:
         """
         amount = random.uniform(1000, 5000)
 
-        # Pick random accounts
-        from_account = random.choice(accounts)
+        # Use VPA selector if available, otherwise random
+        if self.vpa_selector:
+            from_account = self.vpa_selector.select_source_vpa()
+        else:
+            from_account = random.choice(accounts)
+
         to_account = random.choice([a for a in accounts if a != from_account])
 
-        return {
+        transaction = {
             "from_vpa": from_account,
             "to_vpa": to_account,
             "amount": round(amount, 2),
             "campaign_id": campaign.campaign_id,
             "step": self.step
         }
+
+        # Add timestamp if timer is available
+        if self.timer:
+            transaction["timestamp"] = self.timer.next_transaction_time()
+
+        return transaction
 
     def observe(self, response: Dict):
         """
