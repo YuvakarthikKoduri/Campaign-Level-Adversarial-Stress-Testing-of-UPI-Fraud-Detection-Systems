@@ -28,11 +28,28 @@ class ExperimentScenarios:
 
         Args:
             detector: Trained fraud detector
-            environment: UPI environment simulator
+            environment: UPI environment simulator (used as template)
         """
         self.detector = detector
-        self.environment = environment
+        self.environment = environment  # Used as template for creating fresh environments
         self.campaign_generator = CampaignGenerator()
+
+    def _create_fresh_environment(self):
+        """
+        Create a fresh UPI environment for campaign isolation.
+
+        This prevents velocity accumulation artifacts by ensuring each
+        campaign is evaluated independently without transaction history
+        from previous campaigns.
+
+        Returns:
+            Fresh UPIEnvironment instance with same detector and config
+        """
+        from src.environment import UPIEnvironment
+        return UPIEnvironment(
+            threshold_config=self.environment.threshold_config,
+            fraud_detector=self.detector
+        )
 
     def run_scenario_s1(
         self,
@@ -51,9 +68,12 @@ class ExperimentScenarios:
         campaigns = []
 
         for i in range(num_campaigns):
+            # Create FRESH environment for each campaign to avoid velocity accumulation
+            fresh_environment = self._create_fresh_environment()
+
             campaign = self.campaign_generator.create_known_fraud_campaign()
             attacker = StaticAttacker(fraud_type="known")
-            executor = CampaignExecutor(self.detector, self.environment, attacker)
+            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
 
             completed_campaign = executor.execute_campaign(
                 campaign,
@@ -82,9 +102,12 @@ class ExperimentScenarios:
         campaigns = []
 
         for i in range(num_campaigns):
+            # Create FRESH environment for each campaign to avoid velocity accumulation
+            fresh_environment = self._create_fresh_environment()
+
             campaign = self.campaign_generator.create_known_fraud_campaign()
             attacker = AdaptiveAttacker(fraud_type="known")
-            executor = CampaignExecutor(self.detector, self.environment, attacker)
+            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
 
             completed_campaign = executor.execute_campaign(
                 campaign,
@@ -113,9 +136,12 @@ class ExperimentScenarios:
         campaigns = []
 
         for i in range(num_campaigns):
+            # Create FRESH environment for each campaign to avoid velocity accumulation
+            fresh_environment = self._create_fresh_environment()
+
             campaign = self.campaign_generator.create_unknown_fraud_campaign()
             attacker = StaticAttacker(fraud_type="unknown")
-            executor = CampaignExecutor(self.detector, self.environment, attacker)
+            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
 
             completed_campaign = executor.execute_campaign(
                 campaign,
@@ -145,9 +171,12 @@ class ExperimentScenarios:
         campaigns = []
 
         for i in range(num_campaigns):
+            # Create FRESH environment for each campaign to avoid velocity accumulation
+            fresh_environment = self._create_fresh_environment()
+
             campaign = self.campaign_generator.create_unknown_fraud_campaign()
             attacker = AdaptiveAttacker(fraud_type="unknown")
-            executor = CampaignExecutor(self.detector, self.environment, attacker)
+            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
 
             completed_campaign = executor.execute_campaign(
                 campaign,
