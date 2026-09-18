@@ -2,7 +2,6 @@
 
 from typing import Dict, List, Optional
 from dataclasses import dataclass
-from .campaign import Campaign
 
 
 @dataclass
@@ -22,7 +21,7 @@ class CampaignValidator:
         self.min_step_amount = 10
         self.max_step_amount = 100000
 
-    def validate(self, campaign: Campaign, accounts: List[str]) -> ValidationResult:
+    def validate(self, campaign, accounts: List[str]) -> ValidationResult:
         """
         Validate campaign against constraints.
 
@@ -84,7 +83,7 @@ class CampaignValidator:
 
     def validate_batch(
         self,
-        campaigns: List[Campaign],
+        campaigns: List,
         accounts: List[str]
     ) -> Dict[str, ValidationResult]:
         """

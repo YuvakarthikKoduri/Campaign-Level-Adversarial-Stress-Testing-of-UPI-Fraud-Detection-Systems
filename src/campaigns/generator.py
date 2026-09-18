@@ -169,22 +169,30 @@ class CampaignGenerator:
         """
         Create an unknown fraud campaign.
 
-        Unknown fraud uses patterns different from training data:
-        - Small transaction amounts (₹1,000-5,000 per attempt)
-        - Slower timing
-        - Multiple intermediate accounts
-        - Gradual movement
+        Unknown fraud uses patterns different from training data.
+        Randomly selects one of three unknown families:
+        - SLOW_DRAIN: Small repeated transactions
+        - GRADUAL_ESCALATION: Progressive amount increase
+        - BENEFICIARY_HOPPING: Rapid beneficiary rotation
 
-        Default target: ₹15,000 (achievable in 3-15 successful small transactions)
-        Family: SLOW_DRAIN
+        Default target: ₹15,000 (achievable in multiple successful transactions)
+        Family: Random selection from unknown families
         """
+        import random
+
         if target_amount is None:
-            # Realistic target: multiple successful small transactions
-            # Base transaction ≈ ₹3,000, so target of ₹15,000 needs 5 successes
             target_amount = 15000
 
         if attacker_id is None:
             attacker_id = f"attacker_{uuid.uuid4().hex[:8]}"
+
+        # Randomly select one of the three unknown families
+        unknown_families = [
+            CampaignFamily.SLOW_DRAIN,
+            CampaignFamily.GRADUAL_ESCALATION,
+            CampaignFamily.BENEFICIARY_HOPPING
+        ]
+        selected_family = random.choice(unknown_families)
 
         campaign = Campaign(
             campaign_id=f"unknown_{uuid.uuid4().hex[:8]}",
@@ -192,7 +200,7 @@ class CampaignGenerator:
             objective="Move funds using previously unseen patterns",
             target_amount=target_amount,
             fraud_type="unknown",
-            family=CampaignFamily.SLOW_DRAIN
+            family=selected_family
         )
 
         self.campaigns.append(campaign)
