@@ -162,7 +162,8 @@ class ExperimentScenarios:
     def run_all_scenarios(
         self,
         num_campaigns: int = 100,
-        save_results: bool = True
+        save_results: bool = True,
+        detector_name: str = "XGBoost"
     ) -> Dict[str, Dict]:
         """
         Run all four scenarios and compare results.
@@ -170,6 +171,7 @@ class ExperimentScenarios:
         Args:
             num_campaigns: Number of campaigns per scenario
             save_results: Save results to JSON files
+            detector_name: Name of detector for result naming
 
         Returns:
             Dictionary with results for all scenarios
@@ -194,7 +196,7 @@ class ExperimentScenarios:
         results['S4'] = self.run_scenario_s4(num_campaigns, accounts)
 
         if save_results:
-            self._save_results(results)
+            self._save_results(results, detector_name=detector_name)
 
         self._print_comparison(results)
 
@@ -204,16 +206,27 @@ class ExperimentScenarios:
         """Generate test VPA addresses."""
         return [f"user{i}@upi" for i in range(num_accounts)]
 
-    def _save_results(self, results: Dict[str, Dict]):
+    def _save_results(self, results: Dict[str, Dict], detector_name: str = "XGBoost"):
         """Save results to JSON files."""
         results_dir = Path("results/metrics")
         results_dir.mkdir(parents=True, exist_ok=True)
 
+        # Create detector-specific subdirectory
+        detector_slug = detector_name.lower().replace(' ', '_')
+        detector_dir = results_dir / detector_slug
+        detector_dir.mkdir(parents=True, exist_ok=True)
+
         for scenario, data in results.items():
-            filepath = results_dir / f"{scenario}_results.json"
+            # Save in detector-specific directory
+            filepath = detector_dir / f"{scenario}_results.json"
             with open(filepath, 'w') as f:
                 json.dump(data, f, indent=2)
             print(f"Saved {scenario} results to {filepath}")
+
+            # Also save in main directory for backward compatibility
+            main_filepath = results_dir / f"{scenario}_results.json"
+            with open(main_filepath, 'w') as f:
+                json.dump(data, f, indent=2)
 
     def _print_comparison(self, results: Dict[str, Dict]):
         """Print comparison table."""
