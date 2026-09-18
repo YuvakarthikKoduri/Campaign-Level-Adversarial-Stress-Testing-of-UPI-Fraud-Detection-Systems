@@ -24,9 +24,9 @@ def main():
     # Create environment
     environment = UPIEnvironment(fraud_detector=detector)
 
-    # Create unknown fraud campaign
+    # Create unknown fraud campaign (using default feasible target)
     generator = CampaignGenerator()
-    campaign = generator.create_unknown_fraud_campaign(target_amount=30000)
+    campaign = generator.create_unknown_fraud_campaign()
 
     # Create adaptive attacker
     attacker = AdaptiveAttacker(fraud_type="unknown")
