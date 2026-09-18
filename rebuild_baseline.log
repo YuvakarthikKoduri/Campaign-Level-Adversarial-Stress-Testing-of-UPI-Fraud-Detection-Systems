@@ -1,0 +1,162 @@
+======================================================================
+UPI BASELINE DETECTOR TRAINING
+======================================================================
+Date: 2026-09-18 16:05:22
+
+Generating 50,000 synthetic UPI transactions...
+
+======================================================================
+SYNTHETIC DATA GENERATION SUMMARY
+======================================================================
+
+Total transactions: 50,000
+Legitimate: 47,500 (95.0%)
+Fraud: 2,500 (5.0%)
+
+Feature Distributions:
+
+Amount:
+  Legit:  ₹    100 - ₹ 97,764  (median: ₹ 1,041)
+  Fraud:  ₹    500 - ₹100,000  (median: ₹ 7,866)
+  Overlap: Legit P95=₹18,546, Fraud P05=₹918
+
+Hour of Day:
+  Legit:  mean=12.2, mode=14
+  Fraud:  mean=7.3, mode=0
+
+Velocity (transactions/hour):
+  Legit:  mean=0.80, P90=2
+  Fraud:  mean=3.76, P90=7
+
+New VPA:
+  Legit:  9.9%
+  Fraud:  54.6%
+
+
+Dataset saved to: data/synthetic/upi_transactions_v1.csv
+
+Data splits:
+  Train: 30,000 samples (5.00% fraud)
+  Val:   10,000 samples (5.00% fraud)
+  Test:  10,000 samples (5.00% fraud)
+
+Training XGBOOST detector...
+  Best iteration: 48
+
+Calibrating threshold...
+  Optimal threshold: 0.9242 (max F1)
+  At this threshold:
+    Precision: 0.790
+    Recall: 0.610
+    F1 Score: 0.688
+
+======================================================================
+XGBOOST EVALUATION
+======================================================================
+
+Threshold: 0.9242
+
+ROC-AUC: 0.9587
+PR-AUC:  0.7287
+Precision: 0.7428
+Recall:    0.6180
+F1 Score:  0.6747
+
+Confusion Matrix:
+  TN:   9393  FP:    107
+  FN:    191  TP:    309
+
+Test Set Size: 10,000
+Fraud Rate: 5.00%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.98      0.99      0.98      9500
+       Fraud       0.74      0.62      0.67       500
+
+    accuracy                           0.97     10000
+   macro avg       0.86      0.80      0.83     10000
+weighted avg       0.97      0.97      0.97     10000
+
+
+Training RANDOM_FOREST detector...
+
+Calibrating threshold...
+  Optimal threshold: 0.8775 (max F1)
+  At this threshold:
+    Precision: 0.720
+    Recall: 0.662
+    F1 Score: 0.690
+
+======================================================================
+RANDOM FOREST EVALUATION
+======================================================================
+
+Threshold: 0.8775
+
+ROC-AUC: 0.9524
+PR-AUC:  0.7160
+Precision: 0.6837
+Recall:    0.6700
+F1 Score:  0.6768
+
+Confusion Matrix:
+  TN:   9345  FP:    155
+  FN:    165  TP:    335
+
+Test Set Size: 10,000
+Fraud Rate: 5.00%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.98      0.98      0.98      9500
+       Fraud       0.68      0.67      0.68       500
+
+    accuracy                           0.97     10000
+   macro avg       0.83      0.83      0.83     10000
+weighted avg       0.97      0.97      0.97     10000
+
+
+Model saved to: models/baseline_xgboost.pkl
+
+Model saved to: models/baseline_random_forest.pkl
+Model loaded from models/baseline_xgboost.pkl
+Features: 4
+
+======================================================================
+DETECTOR BEHAVIOR DIAGNOSTICS
+======================================================================
+
+Testing detector response to controlled feature combinations:
+
+| Amount | Hour | Velocity | New VPA | Risk Score | Expected | Description |
+|--------|------|----------|---------|------------|----------|-------------|
+| ₹ 1,000 |   14 |        0 |       0 |   0.034982 | low        | Small daytime, low velocity, known VPA        |
+| ₹ 5,000 |   10 |        1 |       0 |   0.202011 | low-medium | Medium daytime, low velocity, known VPA       |
+| ₹25,000 |   14 |        0 |       0 |   0.135090 | medium     | Large daytime, low velocity, known VPA        |
+| ₹25,000 |    2 |        5 |       1 |   0.991633 | high       | Large night, high velocity, new VPA           |
+| ₹50,000 |    3 |        8 |       1 |   0.994456 | very-high  | Very large night, very high velocity, new VPA |
+| ₹100,000 |    2 |       15 |       1 |   0.994456 | extreme    | Extreme amount, night, extreme velocity, new VPA |
+
+
+======================================================================
+FEATURE PARITY TEST
+======================================================================
+
+Expected features: ['amount', 'hour_of_day', 'velocity_1h', 'is_new_vpa']
+Actual features:   ['amount', 'hour_of_day', 'velocity_1h', 'is_new_vpa']
+
+✓ PASS: Feature schemas match
+
+======================================================================
+TRAINING COMPLETE
+======================================================================
+
+XGBoost:       ROC-AUC=0.9587, F1=0.6747, Threshold=0.9242
+Random Forest: ROC-AUC=0.9524, F1=0.6768, Threshold=0.8775
+
+Next step: Run full test suite to verify detector integration
+  python -m pytest tests/test_core.py -v
+
