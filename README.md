@@ -54,6 +54,8 @@ python test_vpa_strategies.py
 python test_timing.py
 ```
 
+**See [TEST_RUN_REPORT.md](TEST_RUN_REPORT.md) for a complete validated test run with detailed results.**
+
 ### 3. Run Experiments
 
 ```bash
