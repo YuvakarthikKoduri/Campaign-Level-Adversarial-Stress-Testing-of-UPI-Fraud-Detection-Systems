@@ -34,10 +34,14 @@ class _LedgerState:
 class SemanticEnvironment(UPIEnvironment):
     """Gate B fixture-only opt-in path; no legacy model can silently enter it."""
 
+    def _validate_predictor(self, predictor):
+        """Default Gate B path stays fixture-only; explicit adapters may narrow by purpose."""
+        if type(predictor) is not FixtureDetector:
+            raise ValueError("Gate B requires an explicit FixtureDetector, not a legacy model")
+
     def __init__(self, namespace, fraud_detector, *, snapshot=None,
                  legacy_naive_utc=False, threshold_config=None):
-        if type(fraud_detector) is not FixtureDetector:
-            raise ValueError("Gate B requires an explicit FixtureDetector, not a legacy model")
+        self._validate_predictor(fraud_detector)
         if type(legacy_naive_utc) is not bool:
             raise ValueError("legacy_naive_utc must be explicit boolean")
         history = (FeatureHistory(namespace) if snapshot is None
@@ -266,8 +270,7 @@ class SemanticEnvironment(UPIEnvironment):
                                      event.event_id)
             record = shared.extract_features(event, view)
             vector = shared.encode_vector(record)
-            if type(self.fraud_detector) is not FixtureDetector:
-                raise ValueError("Only the explicit Gate B fixture adapter is allowed")
+            self._validate_predictor(self.fraud_detector)
             score = self.fraud_detector.predict(vector)
             decision = self.threshold_config.get_decision(score).value
             stage = copy.deepcopy(self._state)
