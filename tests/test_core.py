@@ -181,7 +181,8 @@ class TestEnvironment(unittest.TestCase):
         }
 
         response = self.environment.process_transaction(txn)
-        self.assertEqual(response['decision'], 'BLOCK')
+        self.assertIsNone(response['decision'])
+        self.assertEqual(response['execution_status'], 'invalid')
 
 
 class TestCampaignExecution(unittest.TestCase):
@@ -337,7 +338,8 @@ class TestEdgeCases(unittest.TestCase):
         }
 
         response = self.environment.process_transaction(txn)
-        self.assertEqual(response['decision'], 'BLOCK')
+        self.assertIsNone(response['decision'])
+        self.assertEqual(response['execution_status'], 'invalid')
 
     def test_extremely_high_amount(self):
         """Test transaction with very high amount."""

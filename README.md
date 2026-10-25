@@ -2,15 +2,50 @@
 
 **Campaign-Level Adversarial Stress Testing of UPI Fraud Detection Systems**
 
-[![Tests](https://img.shields.io/badge/tests-29%2F29%20passing-brightgreen)]()
-[![Completion](https://img.shields.io/badge/completion-85%25-blue)]()
-[![Python](https://img.shields.io/badge/python-3.8%2B-blue)]()
+## Corrected-v2 local repair status
+
+The correctness/reproducibility repairs are awaiting review, not a claim of
+production readiness or completed research evaluation. Read
+[the corrected-v2 contract](docs/MILESTONE1_CONTRACT.md) before interpreting results.
+
+New runs use paired immutable workloads, explicit simulated time, label-only
+feedback by default, and fresh output directories. FLAG transfers count as
+transferred exposure, invalid inputs are not detector blocks, and unobserved
+detection/intervention times are censored rather than zero.
+
+The tested runtime is Python 3.11 on Linux. The dedicated lock installs the
+execution/test dependencies without retraining or modifying existing models:
+
+```bash
+python3.11 -m venv .venv-m1
+. .venv-m1/bin/activate
+python -m pip install -r requirements-milestone1.lock
+python -m pytest . -v
+python run_experiment.py --scenario all --detector both \
+  --campaigns 6 --seed 999 --max-steps 30 \
+  --output-dir results/runs --run-id paired-review-a
+```
+
+A repeated run ID raises instead of overwriting. For repeatability use another
+run ID with identical semantic flags and compare `canonical.json`; manifests
+intentionally differ in actual timestamps and run identity.
+
+The existing XGBoost pickle emits a portability warning, which is not hidden.
+No original training environment, temporal/entity-held-out validation, or strict
+leave-one-family-out detector provenance has been established.
+
+## Legacy documentation and historical examples
+
+The sections below retain the original research narrative and historical numbers
+for context. They are not corrected-v2 results, the original “85% complete” and
+“29/29” claims are not current acceptance evidence, and the old unrestricted
+dependency instructions are not the supported reproducibility lock.
 
 ## Overview
 
 This project evaluates the resilience of fraud detection systems under UPI-specific campaign-level scenarios involving previously unseen and strategically adaptive fraud behavior.
 
-**Status: 85% Complete** - Production-ready research prototype with full test coverage and validation.
+Historical status claim: 85% complete. Current status is correctness repairs under review, with scientific evaluation still pending.
 
 ## Key Features
 

@@ -193,8 +193,9 @@ def test_family_static_ignores_feedback_and_adaptive_responds(family):
     static_a.observe({"decision": "ALLOW", "amount": initial[0]["amount"], "to_vpa": "b@upi"})
     static_b.observe({"decision": "FLAG", "amount": initial[0]["amount"], "to_vpa": "b@upi"})
     adaptive.observe({"decision": "FLAG", "amount": initial[0]["amount"], "to_vpa": "b@upi"})
-    assert static_a.choose_action(c, {}, ACCOUNTS) == static_b.choose_action(c, {}, ACCOUNTS)
-    assert adaptive.choose_action(c, {}, ACCOUNTS)["amount"] != static_a.choose_action(c, {}, ACCOUNTS)["amount"]
+    second_static = static_a.choose_action(c, {}, ACCOUNTS)
+    assert second_static == static_b.choose_action(c, {}, ACCOUNTS)
+    assert adaptive.choose_action(c, {}, ACCOUNTS)["amount"] != second_static["amount"]
 
 
 def test_pairing_and_repeat_semantic_outputs():
@@ -247,7 +248,9 @@ def test_action_threat_model_rejects_uncontrolled_sources_and_budget():
     env = UPIEnvironment(fraud_detector=ConstantDetector())
     c = campaign()
     c.budget = 500
-    actor = ScriptedAttacker([action(1000, from_override="outsider@upi")])
+    bad = action(1000)
+    bad["from_vpa"] = "outsider@upi"
+    actor = ScriptedAttacker([bad])
     CampaignExecutor(env.fraud_detector, env, actor).execute_campaign(c, ACCOUNTS, seed=1)
     assert c.status.value == "INVALID" and not env.accounts
 
@@ -269,3 +272,120 @@ def test_runconfig_validates_limits_and_development_eval_separation():
                    {"split": "evaluation", "development_seeds": (42,), "seed": 42}]:
         with pytest.raises(ValueError):
             RunConfig(**kwargs)
+
+
+@pytest.mark.parametrize("score,decision", [(0.3999, "ALLOW"), (0.4, "FLAG"),
+                                           (0.6999, "FLAG"), (0.7, "BLOCK")])
+def test_threshold_boundaries(score, decision):
+    assert UPIEnvironment(fraud_detector=ConstantDetector(score)).process_transaction(action())["decision"] == decision
+
+
+def test_label_only_actions_invariant_to_internal_score():
+    histories, actions = [], []
+    for score in (0.01, 0.39):
+        detector = ConstantDetector(score)
+        env = UPIEnvironment(fraud_detector=detector)
+        c = campaign()
+        c.campaign_id = "same"
+        actor = AdaptiveAttacker("unknown")
+        CampaignExecutor(detector, env, actor, max_steps=4).execute_campaign(c, ACCOUNTS, seed=8)
+        histories.append(actor.history)
+        actions.append([{k: t[k] for k in ("from_vpa", "to_vpa", "amount", "timestamp")}
+                        for t in c.transactions])
+    assert histories[0] == histories[1] and actions[0] == actions[1]
+
+
+def test_score_feedback_is_explicit_and_does_not_expose_features():
+    env = UPIEnvironment(fraud_detector=ConstantDetector())
+    actor = AdaptiveAttacker("unknown")
+    CampaignExecutor(env.fraud_detector, env, actor, 1, feedback="score").execute_campaign(
+        campaign(), ACCOUNTS, seed=1)
+    assert actor.history[0]["risk_score"] == 0.1
+    assert "features" not in actor.history[0]
+
+
+def test_stopping_budget_and_time_termination_are_explicit():
+    for actions, budget, duration, expected in [
+        ([], 500000, 86400, "attacker_stopped"),
+        ([action()], 500, 86400, "budget_exhausted"),
+        ([action(when=START + timedelta(hours=2))], 500000, 1, "time_horizon"),
+    ]:
+        env = UPIEnvironment(fraud_detector=ConstantDetector())
+        c = campaign()
+        c.budget, c.max_duration_seconds = budget, duration
+        CampaignExecutor(env.fraud_detector, env, ScriptedAttacker(actions)).execute_campaign(c, ACCOUNTS, seed=1)
+        assert c.termination_reason == expected and c.is_complete()
+        assert not env.transactions
+
+
+def test_failed_run_has_failed_manifest_not_valid_canonical(tmp_path, monkeypatch):
+    import run_experiment
+    monkeypatch.setattr(run_experiment, "load_detector",
+                        lambda _: (_ for _ in ()).throw(RuntimeError("inference setup failed")))
+    with pytest.raises(RuntimeError):
+        run_experiment.main(["--campaigns", "1", "--output-dir", str(tmp_path), "--run-id", "failed"])
+    root = tmp_path / "failed"
+    assert json.loads((root / "manifest.json").read_text())["status"] == "failed"
+    assert not (root / "canonical.json").exists()
+
+
+def test_benign_traffic_always_block_cannot_be_cost_free():
+    observations = []
+    for score in (0.01, 0.99):
+        env = UPIEnvironment(fraud_detector=ConstantDetector(score))
+        c = campaign()
+        c.is_fraud = False
+        actor = ScriptedAttacker([action(100)])
+        CampaignExecutor(env.fraud_detector, env, actor, 1).execute_campaign(c, ACCOUNTS, seed=1)
+        observations.append(CampaignMetrics.generate_summary([c]))
+    assert observations[0]["legitimate_transaction_block_rate"] == 0
+    assert observations[1]["legitimate_transaction_block_rate"] == 1
+    assert observations[1]["legitimate_amount_blocked"] == 100
+
+
+def test_timer_reset_and_monotonicity():
+    from src.campaigns.timing import CampaignTimer, TIMING_MODELS
+    timer = CampaignTimer(CampaignFamily.SLOW_DRAIN, start_time=START, seed=1)
+    a = [timer.next_transaction_time() for _ in range(20)]
+    timer.reset()
+    b = [timer.next_transaction_time() for _ in range(20)]
+    assert a == b and a == sorted(a) and a[0] == START
+    model = TIMING_MODELS[CampaignFamily.SLOW_DRAIN]
+    assert all(model.min_interval_seconds <= (v - u).total_seconds() <= model.max_interval_seconds
+               for u, v in zip(a, a[1:]))
+
+
+def test_custom_policy_preserved_in_fresh_environments():
+    from src.environment.thresholds import ThresholdConfig
+    from src.experiments.config import RunConfig
+    detector = ConstantDetector(0.5)
+    env = UPIEnvironment(ThresholdConfig(0.6, 0.8), detector)
+    scenarios = ExperimentScenarios(detector, env)
+    result = scenarios.run_scenario_s1(2, seed=5)
+    assert result["blocked_campaigns"] == 0
+    assert all(t["decision"] == "ALLOW" for r in scenarios.records["S1"] for t in r["transactions"])
+    mismatched = ExperimentScenarios(detector, env, config=RunConfig(campaigns=2, seed=5))
+    with pytest.raises(ValueError, match="policy"):
+        mismatched.run_scenario_s1(2, seed=5)
+
+
+def test_policy_rejects_extra_schema_inputs_and_nonfinite_probability():
+    for score in (float("nan"), float("inf"), -0.1, 1.1):
+        env = UPIEnvironment(fraud_detector=ConstantDetector(score))
+        with pytest.raises(RuntimeError):
+            env.process_transaction(action())
+        assert not env.accounts and not env.transactions
+
+
+def test_baseline_feature_order_is_identical_for_dict_order():
+    from src.detectors.baseline import load_detector
+    detector = load_detector("models/baseline_xgboost.pkl")
+    valid = dict(amount=100, hour_of_day=12, velocity_1h=0, is_new_vpa=1)
+    assert detector.predict(valid) == detector.predict(dict(reversed(list(valid.items()))))
+
+
+def test_loaded_detector_uses_deterministic_inference_threads():
+    from src.detectors.baseline import load_detector
+    for name in ("xgboost", "random_forest"):
+        detector = load_detector(f"models/baseline_{name}.pkl")
+        assert detector.model.get_params()["n_jobs"] == 1

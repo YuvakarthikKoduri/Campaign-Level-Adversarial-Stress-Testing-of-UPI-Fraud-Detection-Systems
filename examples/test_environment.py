@@ -22,6 +22,7 @@ from environment import (
     create_aggressive_thresholds
 )
 from datetime import datetime
+import pytest
 
 
 def print_section(title: str):
@@ -31,7 +32,7 @@ def print_section(title: str):
     print('='*60)
 
 
-def test_basic_environment():
+def setup_environment():
     """Test basic environment setup and operations"""
     print_section("1. Basic Environment Setup")
 
@@ -58,6 +59,17 @@ def test_basic_environment():
     print(f"  - {vpa3.vpa_id} ({vpa3.name})")
 
     return env
+
+
+@pytest.fixture
+def env():
+    return setup_environment()
+
+
+def test_basic_environment():
+    env = setup_environment()
+    assert len(env.accounts) == len(env.vpas) == 3
+    assert sum(a.balance for a in env.accounts.values()) == 180000
 
 
 def test_transaction_processing(env):
@@ -113,6 +125,9 @@ def test_transaction_processing(env):
     print(f"  alice@paytm: ₹{env.get_account_balance('alice@paytm'):,.2f}")
     print(f"  bob@phonepe: ₹{env.get_account_balance('bob@phonepe'):,.2f}")
     print(f"  merchant@ybl: ₹{env.get_account_balance('merchant@ybl'):,.2f}")
+    assert env.get_account_balance("alice@paytm") == 24500
+    assert env.get_account_balance("bob@phonepe") == 30500
+    assert sum(a.balance for a in env.accounts.values()) == 180000
 
 
 def test_threshold_configurations(env):
@@ -145,6 +160,8 @@ def test_threshold_configurations(env):
         "timestamp": datetime.now().isoformat()
     })
     print(f"Same transaction - Risk: {result['risk_score']:.3f}, Decision: {result['decision']}")
+    assert env.threshold_config.flag_threshold == 0.5
+    assert sum(a.balance for a in env.accounts.values()) == 180000
 
 
 def test_sequential_transactions(env):
@@ -169,6 +186,8 @@ def test_sequential_transactions(env):
         risk_str = f"{result['risk_score']:.3f}" if result['risk_score'] is not None else "N/A"
         print(f"  {i}. {txn['from_vpa']} → {txn['to_vpa']}: ₹{txn['amount']:,.0f} "
               f"[{result['decision']}] (risk: {risk_str})")
+    assert env.stats["total_transactions"] >= 5
+    assert sum(a.balance for a in env.accounts.values()) == 180000
 
 
 def test_statistics_and_history(env):
@@ -177,6 +196,7 @@ def test_statistics_and_history(env):
 
     # Get overall statistics
     stats = env.get_statistics()
+    assert stats["total_balance"] == 180000
     print("\nEnvironment Statistics:")
     print(f"  Total Transactions: {stats['total_transactions']}")
     print(f"  Allowed: {stats['allowed']}")
@@ -206,7 +226,7 @@ def main():
 
     try:
         # Run all tests
-        env = test_basic_environment()
+        env = setup_environment()
         test_transaction_processing(env)
         test_threshold_configurations(env)
         test_sequential_transactions(env)
