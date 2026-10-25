@@ -1,0 +1,31 @@
+diff --git a/src/campaigns/executor.py b/src/campaigns/executor.py
+index 5cfee18..ac9e898 100644
+--- a/src/campaigns/executor.py
++++ b/src/campaigns/executor.py
+@@ -115,6 +115,8 @@ class CampaignExecutor:
+                                     campaign.family, campaign.fraud_type)
+         if len(set(accounts)) < 2:
+             raise ValueError("At least two controlled VPAs required")
++        if hasattr(self.attacker, "begin_episode"):
++            self.attacker.begin_episode(view, self.max_steps)
+ 
+         if verbose:
+             print(f"\n{'='*60}")
+@@ -195,6 +197,8 @@ class CampaignExecutor:
+             if self.feedback == "score":
+                 feedback["risk_score"] = response["risk_score"]
+             self.attacker.observe(feedback)
++            if hasattr(self.attacker, "last_transition"):
++                transaction["rl_transition"] = self.attacker.last_transition
+             last_time = when
+ 
+             if verbose:
+@@ -202,6 +206,8 @@ class CampaignExecutor:
+ 
+         if not campaign.is_complete():
+             campaign.finalize(CampaignStatus.TIMED_OUT, "step_horizon", last_time)
++        if hasattr(self.attacker, "end_episode"):
++            self.attacker.end_episode(campaign.status.value)
+ 
+         if verbose:
+             self._print_summary(campaign)

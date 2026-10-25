@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="450">
+<rect width="1000" height="450" fill="white"/>
+<g font-family="sans-serif" fill="#172033">
+<text x="40" y="35" font-size="23">RL training reward</text>
+<text x="40" y="60" font-size="13">Non-overlapping 25-episode means pooled across training seeds; reward is not detector quality.</text>
+<path d="M75 365 H930" stroke="#e2e8f0"/>
+<text x="20" y="370" font-size="12">-1.20</text>
+<path d="M75 300 H930" stroke="#e2e8f0"/>
+<text x="20" y="305" font-size="12">0.38</text>
+<path d="M75 235 H930" stroke="#e2e8f0"/>
+<text x="20" y="240" font-size="12">1.97</text>
+<path d="M75 170 H930" stroke="#e2e8f0"/>
+<text x="20" y="175" font-size="12">3.55</text>
+<path d="M75 105 H930" stroke="#e2e8f0"/>
+<text x="20" y="110" font-size="12">5.13</text>
+<polyline points="431.25,165.48 787.50,119.04 930.00,105.00" fill="none" stroke="#2563eb" stroke-width="3"/>
+<text x="100" y="420" fill="#2563eb" font-size="14">random_forest</text>
+<polyline points="431.25,200.01 787.50,129.13 930.00,118.72" fill="none" stroke="#d97706" stroke-width="3"/>
+<text x="400" y="420" fill="#d97706" font-size="14">xgboost</text>
+<text x="75" y="390" font-size="12">0</text>
+<text x="820" y="390" font-size="12">60 episodes</text>
+</g></svg>

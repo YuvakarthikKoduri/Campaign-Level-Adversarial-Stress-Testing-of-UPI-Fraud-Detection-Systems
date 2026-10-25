@@ -115,6 +115,8 @@ class CampaignExecutor:
                                     campaign.family, campaign.fraud_type)
         if len(set(accounts)) < 2:
             raise ValueError("At least two controlled VPAs required")
+        if hasattr(self.attacker, "begin_episode"):
+            self.attacker.begin_episode(view, self.max_steps)
 
         if verbose:
             print(f"\n{'='*60}")
@@ -129,6 +131,7 @@ class CampaignExecutor:
                 print(f"Source VPA: {vpa_selector.get_strategy_description()}")
             print(f"{'='*60}\n")
 
+        campaign.proposals = 0
         while step < self.max_steps and not campaign.is_complete():
             step += 1
 
@@ -143,6 +146,7 @@ class CampaignExecutor:
                 # Attacker decided to stop
                 campaign.finalize(CampaignStatus.FAILED, "attacker_stopped", last_time)
                 break
+            campaign.proposals += 1
 
             # Ensure timestamp is present (attacker should provide it)
             if 'timestamp' not in transaction:
@@ -195,6 +199,8 @@ class CampaignExecutor:
             if self.feedback == "score":
                 feedback["risk_score"] = response["risk_score"]
             self.attacker.observe(feedback)
+            if hasattr(self.attacker, "last_transition"):
+                transaction["rl_transition"] = self.attacker.last_transition
             last_time = when
 
             if verbose:
@@ -202,6 +208,8 @@ class CampaignExecutor:
 
         if not campaign.is_complete():
             campaign.finalize(CampaignStatus.TIMED_OUT, "step_horizon", last_time)
+        if hasattr(self.attacker, "end_episode"):
+            self.attacker.end_episode(campaign.status.value)
 
         if verbose:
             self._print_summary(campaign)

@@ -1,0 +1,263 @@
+{
+  "passed": true,
+  "policies": {
+    "q_random_forest_101.json": {
+      "equal": true,
+      "sha256": "fe5e65ba2db0fd677809270ed4d8313a4a031f1936420d8449a2e49096c9c202"
+    },
+    "q_random_forest_202.json": {
+      "equal": true,
+      "sha256": "187c33cbdd104b3f3adc07fd1360c2216e90d4be76ea7f7bc768c478caf12abb"
+    },
+    "q_random_forest_303.json": {
+      "equal": true,
+      "sha256": "4edccde43852c0f5969b5ab8ad25088809ba286382340978f7226419c57e7658"
+    },
+    "q_xgboost_101.json": {
+      "equal": true,
+      "sha256": "9265baeabf202294b41a9b5c6daadc5ebd8facf2ef5a53c76edfe12dc5823be5"
+    },
+    "q_xgboost_202.json": {
+      "equal": true,
+      "sha256": "6008c9e9c176def73a781fd0b339226407e68b27591bd029341f98e52c74c620"
+    },
+    "q_xgboost_303.json": {
+      "equal": true,
+      "sha256": "ffa957386b0a16ba251744383213e458aca1eab23fa00f113c7b7f52e0ccc5e3"
+    }
+  },
+  "reload": {
+    "campaigns.json": {
+      "equal": true,
+      "sha256": "b876140512b65943aaa60fc553b3e43223d2d99259df1043099b436c40647469"
+    },
+    "comparison.svg": {
+      "equal": true,
+      "sha256": "ba186b40fa07ea2f7c440b245b6858a715908ec2b9dd5147e4a51f3dc5661ab1"
+    },
+    "per_seed.csv": {
+      "equal": true,
+      "sha256": "411e74017a376017376f3b0313fc1cf58faba52bbdd4276f656e57f8133d00d3"
+    },
+    "summary.csv": {
+      "equal": true,
+      "sha256": "33ded4aae5779455cf182ef93fb0807819cf45037e161f9397010a95b6b0edde"
+    },
+    "summary.json": {
+      "equal": true,
+      "sha256": "04a1644c9a08d255c8e9a4e2e61156fed854556dbb70e49faf85818b7bfa1dd6"
+    },
+    "transactions.csv": {
+      "equal": true,
+      "sha256": "75a16a7ce55de61f05d7a3bdb176d082c2e8da90440383276d0c07aa4166451d"
+    }
+  },
+  "repeat": {
+    "campaigns.json": {
+      "equal": true,
+      "sha256": "b876140512b65943aaa60fc553b3e43223d2d99259df1043099b436c40647469"
+    },
+    "comparison.svg": {
+      "equal": true,
+      "sha256": "ba186b40fa07ea2f7c440b245b6858a715908ec2b9dd5147e4a51f3dc5661ab1"
+    },
+    "learning.csv": {
+      "equal": true,
+      "sha256": "d8a3e28f1b38582df44228cc4d67082b6c6b50b6c460506e0f136bd9b4d2cb75"
+    },
+    "learning.svg": {
+      "equal": true,
+      "sha256": "209dbd98afc1b309440f9d6fea753f1f4a761b21380b8cad3394737172be62f1"
+    },
+    "manifest.json": {
+      "equal": true,
+      "sha256": "d991ae97f2e39fbf037ad0a1055e3c43c6472446c5a226750bade7297a405d08"
+    },
+    "per_seed.csv": {
+      "equal": true,
+      "sha256": "411e74017a376017376f3b0313fc1cf58faba52bbdd4276f656e57f8133d00d3"
+    },
+    "summary.csv": {
+      "equal": true,
+      "sha256": "33ded4aae5779455cf182ef93fb0807819cf45037e161f9397010a95b6b0edde"
+    },
+    "summary.json": {
+      "equal": true,
+      "sha256": "04a1644c9a08d255c8e9a4e2e61156fed854556dbb70e49faf85818b7bfa1dd6"
+    },
+    "transactions.csv": {
+      "equal": true,
+      "sha256": "75a16a7ce55de61f05d7a3bdb176d082c2e8da90440383276d0c07aa4166451d"
+    }
+  },
+  "source_identity": {
+    "run_prototype.py": {
+      "equal": true
+    },
+    "src/__init__.py": {
+      "equal": true
+    },
+    "src/attackers/__init__.py": {
+      "equal": true
+    },
+    "src/attackers/adaptive.py": {
+      "equal": true
+    },
+    "src/attackers/family_based.py": {
+      "equal": true
+    },
+    "src/attackers/q_learning.py": {
+      "equal": true
+    },
+    "src/attackers/static.py": {
+      "equal": true
+    },
+    "src/campaigns/__init__.py": {
+      "equal": true
+    },
+    "src/campaigns/executor.py": {
+      "equal": true
+    },
+    "src/campaigns/generator.py": {
+      "equal": true
+    },
+    "src/campaigns/semantic_executor.py": {
+      "equal": true
+    },
+    "src/campaigns/timing.py": {
+      "equal": true
+    },
+    "src/campaigns/validator.py": {
+      "equal": true
+    },
+    "src/campaigns/vpa_strategy.py": {
+      "equal": true
+    },
+    "src/data/__init__.py": {
+      "equal": true
+    },
+    "src/data/loader.py": {
+      "equal": true
+    },
+    "src/data/preprocessor.py": {
+      "equal": true
+    },
+    "src/data/semantic_collection.py": {
+      "equal": true
+    },
+    "src/data/semantic_dataset.py": {
+      "equal": true
+    },
+    "src/data/semantic_entities.py": {
+      "equal": true
+    },
+    "src/data/semantic_generator.py": {
+      "equal": true
+    },
+    "src/data/semantic_provenance.py": {
+      "equal": true
+    },
+    "src/data/synthetic.py": {
+      "equal": true
+    },
+    "src/detectors/__init__.py": {
+      "equal": true
+    },
+    "src/detectors/baseline.py": {
+      "equal": true
+    },
+    "src/detectors/semantic.py": {
+      "equal": true
+    },
+    "src/detectors/semantic_model.py": {
+      "equal": true
+    },
+    "src/detectors/semantic_policy.py": {
+      "equal": true
+    },
+    "src/detectors/semantic_train.py": {
+      "equal": true
+    },
+    "src/detectors/train.py": {
+      "equal": true
+    },
+    "src/environment/__init__.py": {
+      "equal": true
+    },
+    "src/environment/entities.py": {
+      "equal": true
+    },
+    "src/environment/semantic.py": {
+      "equal": true
+    },
+    "src/environment/simulator.py": {
+      "equal": true
+    },
+    "src/environment/thresholds.py": {
+      "equal": true
+    },
+    "src/evaluation/__init__.py": {
+      "equal": true
+    },
+    "src/evaluation/metrics.py": {
+      "equal": true
+    },
+    "src/experiments/__init__.py": {
+      "equal": true
+    },
+    "src/experiments/config.py": {
+      "equal": true
+    },
+    "src/experiments/prototype.py": {
+      "equal": true
+    },
+    "src/experiments/prototype_plots.py": {
+      "equal": true
+    },
+    "src/experiments/scenarios.py": {
+      "equal": true
+    },
+    "src/features/__init__.py": {
+      "equal": true
+    },
+    "src/features/events.py": {
+      "equal": true
+    },
+    "src/features/extractor.py": {
+      "equal": true
+    },
+    "src/features/history.py": {
+      "equal": true
+    },
+    "src/features/schema.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/__init__.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/authorization.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/cli.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/config.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/integrity.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/review.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/storage.py": {
+      "equal": true
+    },
+    "src/semantic_pipeline/workflow.py": {
+      "equal": true
+    },
+    "src/visualization/__init__.py": {
+      "equal": true
+    }
+  }
+}

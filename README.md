@@ -1,5 +1,21 @@
 # UPI Fraud Stress Lab
 
+## Working academic RL prototype
+
+The separate development extension adds a tabular Q-learning attacker integrated
+with the existing campaign executor, both saved detectors, paired comparison
+experiments, checkpoint evaluation, transaction traces and SVG plots. Read
+[the prototype guide](docs/PROTOTYPE_GUIDE.md) for commands, definitions and
+limitations; see `PROTOTYPE_COMPLETION_REPORT.md` for executed evidence.
+
+```sh
+python -B -s run_prototype.py --detector both --attacker all --seeds 101 \
+  --episodes 60 --campaigns 6 --output demo-short
+```
+
+This does not run or authorize the held Gate C pilot. The historical claims
+below are retained for context, not adopted as prototype validation evidence.
+
 **Campaign-Level Adversarial Stress Testing of UPI Fraud Detection Systems**
 
 ## Corrected-v2 local repair status

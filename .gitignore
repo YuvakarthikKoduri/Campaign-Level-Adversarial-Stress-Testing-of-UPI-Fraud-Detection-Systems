@@ -67,3 +67,9 @@ Thumbs.db
 .env
 .env.local
 .claude/
+
+# Academic prototype development-only verification copies and environments
+prototype_evidence/package-check/
+.venv-prototype/
+.venv-m1/
+.pytest_cache/

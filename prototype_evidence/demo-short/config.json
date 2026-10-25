@@ -1,0 +1,12 @@
+{
+  "attacker": "all",
+  "block_threshold": 0.7,
+  "campaigns": 6,
+  "detector": "both",
+  "episodes": 60,
+  "flag_threshold": 0.4,
+  "max_steps": 30,
+  "seeds": [
+    101
+  ]
+}

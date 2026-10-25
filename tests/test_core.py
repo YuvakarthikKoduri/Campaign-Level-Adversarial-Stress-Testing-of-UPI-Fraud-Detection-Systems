@@ -148,7 +148,9 @@ class TestEnvironment(unittest.TestCase):
         response = self.environment.process_transaction(txn)
         self.assertIn('decision', response)
         self.assertIn('risk_score', response)
-        self.assertIn(response['decision'], ['ALLOW', 'BLOCK'])
+        self.assertIn(response['decision'], ['ALLOW', 'FLAG', 'BLOCK'])
+        self.assertEqual(response['decision'], self.environment.threshold_config.get_decision(
+            response['risk_score']).value)
 
     def test_account_balance_tracking(self):
         """Test that environment tracks transactions."""

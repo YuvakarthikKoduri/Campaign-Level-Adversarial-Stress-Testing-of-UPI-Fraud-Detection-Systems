@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<g font-family="sans-serif" fill="#172033">
+<text x="35" y="35" font-size="24">Synthetic campaign success</text>
+<text x="35" y="60" font-size="13">Mean of evaluation-seed success rates; exploratory, not real UPI validation.</text>
+<text x="45" y="110" font-size="17">random_forest / known</text>
+<text x="45" y="145" font-size="13">static</text>
+<rect x="150" y="131" width="270.00" height="22" fill="#64748b"/>
+<text x="425.00" y="147" font-size="12">100.0%</text>
+<text x="45" y="191" font-size="13">adaptive</text>
+<rect x="150" y="177" width="270.00" height="22" fill="#d97706"/>
+<text x="425.00" y="193" font-size="12">100.0%</text>
+<text x="45" y="237" font-size="13">rl</text>
+<rect x="150" y="223" width="270.00" height="22" fill="#2563eb"/>
+<text x="425.00" y="239" font-size="12">100.0%</text>
+<text x="45" y="283" font-size="13">untrained_rl</text>
+<rect x="150" y="269" width="180.00" height="22" fill="#9333ea"/>
+<text x="335.00" y="285" font-size="12">66.7%</text>
+<text x="535" y="110" font-size="17">random_forest / unknown</text>
+<text x="535" y="145" font-size="13">static</text>
+<rect x="640" y="131" width="270.00" height="22" fill="#64748b"/>
+<text x="915.00" y="147" font-size="12">100.0%</text>
+<text x="535" y="191" font-size="13">adaptive</text>
+<rect x="640" y="177" width="270.00" height="22" fill="#d97706"/>
+<text x="915.00" y="193" font-size="12">100.0%</text>
+<text x="535" y="237" font-size="13">rl</text>
+<rect x="640" y="223" width="270.00" height="22" fill="#2563eb"/>
+<text x="915.00" y="239" font-size="12">100.0%</text>
+<text x="535" y="283" font-size="13">untrained_rl</text>
+<rect x="640" y="269" width="270.00" height="22" fill="#9333ea"/>
+<text x="915.00" y="285" font-size="12">100.0%</text>
+<text x="45" y="385" font-size="17">xgboost / known</text>
+<text x="45" y="420" font-size="13">static</text>
+<rect x="150" y="406" width="270.00" height="22" fill="#64748b"/>
+<text x="425.00" y="422" font-size="12">100.0%</text>
+<text x="45" y="466" font-size="13">adaptive</text>
+<rect x="150" y="452" width="270.00" height="22" fill="#d97706"/>
+<text x="425.00" y="468" font-size="12">100.0%</text>
+<text x="45" y="512" font-size="13">rl</text>
+<rect x="150" y="498" width="270.00" height="22" fill="#2563eb"/>
+<text x="425.00" y="514" font-size="12">100.0%</text>
+<text x="45" y="558" font-size="13">untrained_rl</text>
+<rect x="150" y="544" width="180.00" height="22" fill="#9333ea"/>
+<text x="335.00" y="560" font-size="12">66.7%</text>
+<text x="535" y="385" font-size="17">xgboost / unknown</text>
+<text x="535" y="420" font-size="13">static</text>
+<rect x="640" y="406" width="225.00" height="22" fill="#64748b"/>
+<text x="870.00" y="422" font-size="12">83.3%</text>
+<text x="535" y="466" font-size="13">adaptive</text>
+<rect x="640" y="452" width="270.00" height="22" fill="#d97706"/>
+<text x="915.00" y="468" font-size="12">100.0%</text>
+<text x="535" y="512" font-size="13">rl</text>
+<rect x="640" y="498" width="270.00" height="22" fill="#2563eb"/>
+<text x="915.00" y="514" font-size="12">100.0%</text>
+<text x="535" y="558" font-size="13">untrained_rl</text>
+<rect x="640" y="544" width="270.00" height="22" fill="#9333ea"/>
+<text x="915.00" y="560" font-size="12">100.0%</text>
+</g></svg>
