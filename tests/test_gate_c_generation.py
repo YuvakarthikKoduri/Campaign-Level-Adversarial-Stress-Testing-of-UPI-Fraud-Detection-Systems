@@ -37,6 +37,7 @@ def test_versioned_configuration_and_seed_contract():
     assert c.data["profiles"]["baseline"]["components"] == 1000
     assert c.data["profiles"]["pilot"]["components"] == 24
     assert c.data["policy"]["benign_block_budget"] == .01
+    assert c.data["behavior"]["family_probabilities"] == [.25, .25, .25, .25]
     payload = json.dumps(["upi-gc-seed-v1", 42026, "entity", "component0"],
                          separators=(",", ":"), sort_keys=True).encode()
     assert derive_seed(42026, "entity", "component0") == int.from_bytes(

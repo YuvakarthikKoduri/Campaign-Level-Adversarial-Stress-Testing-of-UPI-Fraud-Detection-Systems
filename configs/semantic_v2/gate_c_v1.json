@@ -42,7 +42,8 @@
     "escalation_start": 200,
     "escalation_multiplier": [1.15, 1.5],
     "escalation_jitter_sigma": 0.1,
-    "families": ["high_value_burst", "slow_drain", "gradual_escalation", "beneficiary_hopping"]
+    "families": ["high_value_burst", "slow_drain", "gradual_escalation", "beneficiary_hopping"],
+    "family_probabilities": [0.25, 0.25, 0.25, 0.25]
   },
   "splits": {
     "train": ["2026-01-01T00:00:00Z", "2026-01-15T00:00:00Z"],

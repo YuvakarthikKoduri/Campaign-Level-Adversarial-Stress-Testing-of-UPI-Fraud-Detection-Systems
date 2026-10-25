@@ -85,7 +85,7 @@ def validate_config(d):
         "amount_minimum_rupees", "amount_maximum_rupees", "individual_amount", "merchant_amount",
         "burst_amount", "drain_amount", "routine_delay", "drain_delay", "short_delay_mean",
         "hopping_delay", "escalation_delay", "delay_clip_seconds", "escalation_start",
-        "escalation_multiplier", "escalation_jitter_sigma", "families"}
+        "escalation_multiplier", "escalation_jitter_sigma", "families", "family_probabilities"}
     if set(b) != behavior_keys:
         raise ValueError("Missing/unknown behavioral configuration")
     integer(b["episode_seconds"], "episode duration", 1, 86400)
@@ -97,8 +97,15 @@ def validate_config(d):
         raise ValueError("Incomplete balance/burst recipe")
     if tuple(b["families"]) != FAMILIES:
         raise ValueError("Unreviewed process-family set")
+    weights = b["family_probabilities"]
+    if type(weights) is not list or len(weights) != len(FAMILIES):
+        raise ValueError("Explicit family mixture probabilities required")
+    for value in weights:
+        number(value, "family probability", 0, 1)
+    if not math.isclose(sum(weights), 1, abs_tol=1e-12, rel_tol=0):
+        raise ValueError("Family probabilities must sum to one")
     for key, value in b.items():
-        if key == "families":
+        if key in ("families", "family_probabilities"):
             continue
         if key.endswith("probability") or key.endswith("reuse"):
             number(value, key, 0, 1)

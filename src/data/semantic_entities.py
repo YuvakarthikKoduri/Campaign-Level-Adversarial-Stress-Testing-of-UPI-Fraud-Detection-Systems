@@ -53,7 +53,7 @@ def generate_entities(config, *, execution_id, permit=None, profile="baseline"):
         split = assignments[index]
         start, end = map(timestamp_us, d["splits"][split])
         start_time = int(tr.integers(start, end - d["behavior"]["episode_seconds"] * 1_000_000))
-        family = str(ir.choice(d["behavior"]["families"]))
+        family = str(ir.choice(d["behavior"]["families"], p=d["behavior"]["family_probabilities"]))
         mixed = bool(ir.random() < d["behavior"]["mixed_component_probability"])
         attack_start = int(ir.integers(p["attack_start"][0], p["attack_start"][1] + 1))
         components.append(dict(component_id=component, namespace=namespace, split=split,
