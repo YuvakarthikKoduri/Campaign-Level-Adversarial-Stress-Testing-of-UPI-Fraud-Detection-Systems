@@ -35,7 +35,7 @@ class AdaptiveAttacker:
     - Exploits discovered blind spots
     """
 
-    def __init__(self, fraud_type: str = "known"):
+    def __init__(self, fraud_type: str = "known", adaptive: bool = True, seed=None):
         """
         Initialize adaptive attacker.
 
@@ -43,6 +43,8 @@ class AdaptiveAttacker:
             fraud_type: "known" or "unknown"
         """
         self.fraud_type = fraud_type
+        self.adaptive = adaptive
+        self.random = random.Random(seed)
         self.step = 0
         self.history = []
         self.timer = None  # Set by campaign execution
@@ -100,31 +102,32 @@ class AdaptiveAttacker:
             base_amount = 3000
 
         # ENHANCED: Exploit safe region if discovered
-        if self.safe_amounts and random.random() < 0.6:  # 60% chance to exploit
+        if self.safe_amounts and self.random.random() < 0.6:  # 60% chance to exploit
             # Use known-safe amount range
             self.exploit_mode = True
             safe_mean = sum(self.safe_amounts) / len(self.safe_amounts)
             safe_std = max(500, safe_mean * 0.15)  # 15% variation
-            amount = random.gauss(safe_mean, safe_std)
+            amount = self.random.gauss(safe_mean, safe_std)
             amount = max(500, amount)  # Floor at ₹500
         else:
             # Regular adaptive strategy
             self.exploit_mode = False
             amount = base_amount * self.current_amount_multiplier
-            amount = amount * random.uniform(0.9, 1.1)
+            amount = amount * self.random.uniform(0.9, 1.1)
+        amount = max(500, min(50000, amount))
 
         # ENHANCED: Strategic beneficiary selection
         # Use VPA selector for source if available, otherwise random
         if self.vpa_selector:
             from_account = self.vpa_selector.select_source_vpa()
         else:
-            from_account = random.choice(accounts)
+            from_account = self.random.choice(accounts)
 
-        if self.safe_beneficiaries and random.random() < 0.4:
+        if self.safe_beneficiaries and self.random.random() < 0.4:
             # Sometimes reuse beneficiaries that worked
-            available_safe = [b for b in self.safe_beneficiaries if b != from_account]
+            available_safe = sorted(b for b in self.safe_beneficiaries if b != from_account)
             if available_safe:
-                to_account = random.choice(available_safe)
+                to_account = self.random.choice(available_safe)
             else:
                 to_account = self._choose_fresh_beneficiary(accounts, from_account)
         else:
@@ -152,10 +155,10 @@ class AdaptiveAttacker:
             if a != from_account and a not in self.used_beneficiaries
         ]
 
-        if available_fresh and (self.blocked_count > 0 or random.random() < 0.7):
-            beneficiary = random.choice(available_fresh)
+        if available_fresh and (self.blocked_count > 0 or self.random.random() < 0.7):
+            beneficiary = self.random.choice(available_fresh)
         else:
-            beneficiary = random.choice([a for a in accounts if a != from_account])
+            beneficiary = self.random.choice([a for a in accounts if a != from_account])
 
         self.used_beneficiaries.add(beneficiary)
         return beneficiary
@@ -170,6 +173,8 @@ class AdaptiveAttacker:
             response: Detector response with decision and risk_score
         """
         self.history.append(response)
+        if not self.adaptive:
+            return
         decision = response.get("decision", "UNKNOWN")
         risk_score = response.get("risk_score", 0.5)
         amount = response.get("amount", 0)
