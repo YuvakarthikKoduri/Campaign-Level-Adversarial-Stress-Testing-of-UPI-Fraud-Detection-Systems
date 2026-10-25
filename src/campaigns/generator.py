@@ -19,6 +19,8 @@ class CampaignStatus(Enum):
     DETECTED = "DETECTED"
     BLOCKED = "BLOCKED"
     FAILED = "FAILED"
+    TIMED_OUT = "TIMED_OUT"
+    INVALID = "INVALID"
 
 
 class CampaignFamily(Enum):
@@ -61,47 +63,51 @@ class Campaign:
         self.status = CampaignStatus.ACTIVE
         self.total_amount_moved = 0.0
         self.total_amount_blocked = 0.0
-        self.created_at = datetime.now()
+        self.created_at = datetime(2026, 1, 5, 12)
         self.completed_at = None
         self.detection_time = None  # Time to first detection
         self.intervention_time = None  # Time to campaign termination
+        self.total_attempted_amount = 0.0
+        self.exposure_before_detection = None
+        self.exposure_before_intervention = None
+        self.termination_reason = None
+        self.is_fraud = True
+        self.budget = 500000.0
+        self.max_duration_seconds = 86400.0
 
     def add_transaction(self, transaction: Dict):
         """Add a transaction to the campaign."""
+        when = transaction.get("timestamp", self.created_at)
+        if isinstance(when, str):
+            when = datetime.fromisoformat(when)
+        if when < self.created_at:
+            raise ValueError("Event precedes campaign start")
+        before = self.total_amount_moved
+        decision, amount = transaction.get("decision"), transaction.get("amount", 0)
+        moved = transaction.get("amount_transferred", amount if decision in ("ALLOW", "FLAG") else 0)
+        if not 0 <= moved <= amount:
+            raise ValueError("Invalid transferred amount")
         self.transactions.append(transaction)
-
-        # Update totals based on decision
-        decision = transaction.get("decision", "UNKNOWN")
-        amount = transaction.get("amount", 0)
-
-        if decision == "ALLOW":
-            self.total_amount_moved += amount
-        elif decision in ["FLAG", "BLOCK"]:
+        self.total_attempted_amount += amount
+        self.total_amount_moved += moved
+        if decision == "BLOCK":
             self.total_amount_blocked += amount
+        if self.detection_time is None and decision in ("FLAG", "BLOCK"):
+            self.detection_time = (when - self.created_at).total_seconds()
+            self.exposure_before_detection = before
+        if decision == "BLOCK":
+            self.intervention_time = (when - self.created_at).total_seconds()
+            self.exposure_before_intervention = before
+            self.finalize(CampaignStatus.BLOCKED, "first_detector_block", when)
+        elif self.total_amount_moved >= self.target_amount:
+            self.finalize(CampaignStatus.SUCCESS, "target_reached", when)
 
-            # Record first detection time
-            if self.detection_time is None and decision in ["FLAG", "BLOCK"]:
-                self.detection_time = (
-                    datetime.now() - self.created_at
-                ).total_seconds()
-
-            # Campaign terminated on BLOCK
-            if decision == "BLOCK":
-                self.status = CampaignStatus.BLOCKED
-                self.intervention_time = (
-                    datetime.now() - self.created_at
-                ).total_seconds()
-                self.completed_at = datetime.now()
+    def finalize(self, status, reason, when):
+        self.status, self.termination_reason, self.completed_at = status, reason, when
 
     def is_complete(self) -> bool:
         """Check if campaign is complete."""
-        if self.status in [CampaignStatus.BLOCKED, CampaignStatus.FAILED]:
-            return True
-        if self.total_amount_moved >= self.target_amount:
-            self.status = CampaignStatus.SUCCESS
-            self.completed_at = datetime.now()
-            return True
-        return False
+        return self.status != CampaignStatus.ACTIVE
 
     def to_dict(self) -> Dict:
         """Convert to dictionary."""
@@ -119,6 +125,11 @@ class Campaign:
             "num_transactions": len(self.transactions),
             "detection_time": self.detection_time,
             "intervention_time": self.intervention_time,
+            "total_attempted_amount": self.total_attempted_amount,
+            "exposure_before_detection": self.exposure_before_detection,
+            "exposure_before_intervention": self.exposure_before_intervention,
+            "termination_reason": self.termination_reason,
+            "is_fraud": self.is_fraud,
             "created_at": self.created_at.isoformat(),
             "completed_at": self.completed_at.isoformat() if self.completed_at else None
         }

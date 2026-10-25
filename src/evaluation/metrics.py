@@ -46,7 +46,7 @@ class CampaignMetrics:
         ]
 
         if not detection_times:
-            return 0.0
+            return None
 
         return np.mean(detection_times)
 
@@ -67,7 +67,7 @@ class CampaignMetrics:
         ]
 
         if not intervention_times:
-            return 0.0
+            return None
 
         return np.mean(intervention_times)
 
@@ -136,7 +136,12 @@ class CampaignMetrics:
         Returns:
             Dictionary with all metrics
         """
-        return {
+        transactions = [t for c in campaigns for t in c.transactions]
+        legitimate = [t for c in campaigns if not c.is_fraud for t in c.transactions]
+        fraudulent = [c for c in campaigns if c.is_fraud]
+        rate = lambda count, total: count / total if total else None
+        summary = {
+            "metric_version": "corrected-v2",
             "scenario": scenario_name,
             "num_campaigns": len(campaigns),
             "campaign_success_rate": CampaignMetrics.campaign_success_rate(campaigns),
@@ -152,5 +157,34 @@ class CampaignMetrics:
             ),
             "detected_campaigns": sum(
                 1 for c in campaigns if c.detection_time is not None
-            )
+            ),
+            "total_attempted_amount": sum(c.total_attempted_amount for c in campaigns),
+            "detection_censored_campaigns": sum(c.detection_time is None for c in campaigns),
+            "intervention_censored_campaigns": sum(c.intervention_time is None for c in campaigns),
+            "timed_out_campaigns": sum(c.status.value == "TIMED_OUT" for c in campaigns),
+            "invalid_campaigns": sum(c.status.value == "INVALID" for c in campaigns),
+            "failed_campaigns": sum(c.status.value == "FAILED" for c in campaigns),
+            "transaction_count": len(transactions),
+            "transaction_detection_rate": rate(sum(t.get("decision") in ("FLAG", "BLOCK")
+                                                    for t in transactions), len(transactions)),
+            "transaction_block_rate": rate(sum(t.get("decision") == "BLOCK"
+                                                for t in transactions), len(transactions)),
+            "legitimate_transaction_block_rate": rate(sum(t.get("decision") == "BLOCK"
+                                                           for t in legitimate), len(legitimate)),
+            "legitimate_transaction_flag_rate": rate(sum(t.get("decision") == "FLAG"
+                                                          for t in legitimate), len(legitimate)),
+            "legitimate_amount_blocked": sum(t.get("amount", 0) for t in legitimate
+                                             if t.get("decision") == "BLOCK"),
+            "legitimate_transaction_count": len(legitimate),
+            "fraud_campaign_count": len(fraudulent),
+            "fraud_campaign_success_rate": (CampaignMetrics.campaign_success_rate(fraudulent)
+                                            if fraudulent else None),
+            "total_exposure_before_detection": sum(
+                c.exposure_before_detection if c.exposure_before_detection is not None
+                else c.total_amount_moved for c in campaigns),
+            "total_exposure_before_intervention": sum(
+                c.exposure_before_intervention if c.exposure_before_intervention is not None
+                else c.total_amount_moved for c in campaigns),
         }
+        assert summary["total_financial_exposure"] <= summary["total_attempted_amount"] + 1e-6
+        return summary
