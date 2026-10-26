@@ -1,7 +1,9 @@
 {
-  "base": "92a12966ec49fd6dcd147fd4d7411382715bc729",
-  "files_scanned": 225,
+  "integration_base": "92a12966ec49fd6dcd147fd4d7411382715bc729",
+  "pr_base": "1e2ca9e3db4a19bb72e0433f07f10425f74b82fa",
+  "integration_files": 226,
+  "full_pr_files": 371,
   "likely_secret_matches": [],
   "files_over_15MB": [],
-  "note": "All base-to-feature changed files inspected; self-referential inventory hash uses Git. Pattern/size scan and manual diff/archive inspection are not security certification."
+  "note": "Integration scan plus full-PR inventory. Both inventory hashes defer to Git to avoid circular self-reference. Public prototype ancestry is distinguished from mission work; no security certification."
 }
