@@ -1,4 +1,14 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Reproducibility Guide
+
+## Historical command guide
+
+These older commands are not the current verified execution contract and
+must not be interpreted as authorization to run every historical workflow.
+Use `../HANDOVER.md` for the safe selected tests, legacy short demonstration
+and separate new pilot/repeat/reload/checker commands. Old and new source
+manifests are version-specific. Do not run Gate C; it remains HOLD.
 
 This guide explains how to reproduce all experiments in the UPI Fraud Stress Lab.
 

@@ -1,0 +1,5 @@
+experiment,detector,stratum,n,blocked,alerted,block_pct,alert_pct
+mechanism-pilot-v1,random_forest,benign_mimic_test,3600,461,536,12.805555555555555,14.88888888888889
+mechanism-pilot-v1,random_forest,benign_test,3600,0,96,0.0,2.6666666666666665
+mechanism-pilot-v1,xgboost,benign_mimic_test,3600,1738,1862,48.27777777777778,51.72222222222222
+mechanism-pilot-v1,xgboost,benign_test,3600,0,56,0.0,1.5555555555555556

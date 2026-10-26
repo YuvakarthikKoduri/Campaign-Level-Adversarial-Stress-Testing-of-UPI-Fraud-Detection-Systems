@@ -1,0 +1,26 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+Using CPython 3.11.17 interpreter at: PRIOR_ENV_ROOT/bin/python
+Creating virtual environment at: ../fresh-python311
+Activate with: source ../fresh-python311/bin/activate
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+Using Python 3.11.17 environment at: FRESH_ENV_ROOT
+Resolved 18 packages in 351ms
+Installed 18 packages in 118ms
+ + cloudpickle==3.1.2
+ + iniconfig==2.3.1
+ + joblib==1.6.0
+ + narwhals==2.27.1
+ + numpy==2.4.6
+ + nvidia-nccl-cu12==2.32.3
+ + packaging==26.3
+ + pandas==2.2.3
+ + pluggy==1.7.0
+ + pytest==8.3.3
+ + python-dateutil==3.0.0
+ + pytz==2026.5
+ + scikit-learn==1.9.1
+ + scipy==1.17.1
+ + six==1.17.0
+ + threadpoolctl==3.7.0
+ + tzdata==2026.5
+ + xgboost==3.2.0

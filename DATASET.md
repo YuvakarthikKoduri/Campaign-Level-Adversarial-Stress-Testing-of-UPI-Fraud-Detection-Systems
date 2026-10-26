@@ -1,4 +1,15 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Dataset Documentation
+
+## Historical dataset description
+
+The older ULB/Kaggle description below does not establish the data used to
+fit the supplied detector pickles. The inspected current synthetic CSV has
+50,000 rows and its fingerprint is in `../evidence/artifact-audit.stdout`.
+Historical model-to-dataset/family ancestry remains unverified.
+The new matched pilot uses separately generated registered synthetic episodes,
+not this claimed credit-card corpus; see `../FINAL_ACADEMIC_REPORT.md`.
 
 ## Overview
 

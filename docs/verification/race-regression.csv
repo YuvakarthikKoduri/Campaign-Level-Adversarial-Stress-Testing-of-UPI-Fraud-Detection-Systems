@@ -1,0 +1,2 @@
+detector,family,strategy,campaigns,completed,completion,blocks,block_sd,allow,flag,block,mean_attempts,gross
+xgboost,gradual_escalation,rule,360,271,75.27777777777777,9,14.331152934933197,1561,11,89,4.613888888888889,10281177.819999995

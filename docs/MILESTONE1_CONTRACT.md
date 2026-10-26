@@ -1,3 +1,5 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](../README.md), [verification report](VERIFICATION_REPORT.md) and [handover](HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Corrected-v2 experiment contract
 
 This contract applies only to new corrected-v2 runs. Historical results and existing serialized models are retained unchanged, and corrected runs must not be combined with historical tables.

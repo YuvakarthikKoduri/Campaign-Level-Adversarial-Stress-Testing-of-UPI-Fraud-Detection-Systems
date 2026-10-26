@@ -1,3 +1,18 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
+# Historical report: pre-remediation implementation only
+
+Current authority is `../FINAL_ACADEMIC_REPORT.md` and
+`../FINAL_AUDIT_REPORT.md`. Older closeout/report paths in the historical
+body refer to the unchanged package in `../preserved-v1/`.
+
+This historical report is not the closeout verdict. Its original body below
+describes an earlier implementation. Read `../FINAL_ACADEMIC_REPORT.md` and
+`../CLOSEOUT_REPORT.md` for corrected results, current verification and limits.
+The original unchanged report is preserved in `../preserved-reports/`.
+Gate C remains HOLD; historical counts and completion claims are not current
+scientific-validation evidence.
+
 # UPI Fraud Stress Lab: Academic Prototype Completion
 
 The academic prototype runs end to end with an integrated tabular Q-learning

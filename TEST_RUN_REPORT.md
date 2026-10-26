@@ -1,4 +1,14 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Test Run Report - UPI Fraud Stress Lab
+
+## Historical test run
+
+The body below describes an earlier run and must not be counted as current
+execution or added to overlapping current suites. This mission's selected
+suite passed 410 distinct cases; the separately rerun 47 RL cases overlap.
+See `../FINAL_AUDIT_REPORT.md` and `../evidence/commands.jsonl`.
+Current readiness is qualified synthetic academic review, not production validation.
 
 **Date**: 2026-09-18  
 **Test Type**: Full System Validation Run  

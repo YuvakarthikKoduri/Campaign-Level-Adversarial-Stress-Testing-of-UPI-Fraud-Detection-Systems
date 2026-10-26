@@ -1,0 +1,2 @@
+# Optional figure-authoring environment; not needed for dashboard/core tests.
+matplotlib==3.11.2

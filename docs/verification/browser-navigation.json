@@ -1,0 +1,62 @@
+{
+  "navigation": [
+    {
+      "id": "overview",
+      "heading": "Overview"
+    },
+    {
+      "id": "runner",
+      "heading": "Run Experiments"
+    },
+    {
+      "id": "terminal",
+      "heading": "Terminal & Logs"
+    },
+    {
+      "id": "results",
+      "heading": "Results Explorer"
+    },
+    {
+      "id": "detectors",
+      "heading": "Detector Comparison"
+    },
+    {
+      "id": "attackers",
+      "heading": "Attacker Comparison"
+    },
+    {
+      "id": "campaigns",
+      "heading": "Campaign Analysis"
+    },
+    {
+      "id": "models",
+      "heading": "Data & Models"
+    },
+    {
+      "id": "validation",
+      "heading": "Validation & Tests"
+    },
+    {
+      "id": "reports",
+      "heading": "Reports & Export"
+    },
+    {
+      "id": "settings",
+      "heading": "Settings"
+    }
+  ],
+  "widths": [
+    {
+      "width": 1512,
+      "scroll": 1512
+    },
+    {
+      "width": 768,
+      "scroll": 768
+    },
+    {
+      "width": 390,
+      "scroll": 390
+    }
+  ]
+}

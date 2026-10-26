@@ -1,0 +1,12 @@
+{
+  "run": "pilot-main",
+  "filters": {
+    "detector": "xgboost",
+    "strategy": "rule",
+    "family": "gradual_escalation"
+  },
+  "csv": true,
+  "markdown": true,
+  "svg": true,
+  "awaitedCurrentExportHref": true
+}

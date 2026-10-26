@@ -1,4 +1,30 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](../README.md), [verification report](VERIFICATION_REPORT.md) and [handover](HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Prototype presentation and demonstration
+
+## Current research presentation
+
+Use `../../FINAL_ACADEMIC_REPORT.md` and `../../CONSOLIDATED_RESULTS.md`.
+Separate the new matched pilot from the preserved legacy results. Show the
+artifact-bound split registry and independently replayed updates, but also
+show 48.278%/12.806% benign GE-mimic BLOCK: this is a central negative finding.
+Only new GE generator/prefix exclusion is established; old detector-family
+holdout remains unverified. Report 410 selected cases, not old totals or
+the overlapping 47-case subset as extra tests. No universal adaptation/RL
+advantage or real-world robustness claim is justified. Older paths below
+refer to the previous closeout archive in `../../preserved-v1/`.
+Gate C remains HOLD.
+
+## Closeout correction
+
+This brief is retained for demonstration structure, not as the authoritative
+result report. Use `../../FINAL_ACADEMIC_REPORT.md` and `../../HANDOVER.md`.
+The corrected plots and seed tables are in `../../retained-corrected/post-main/`,
+not the historical `comparison-final` directory. “Unknown” means excluded from
+RL training only; detector-family exclusion is not established. Existing AUC
+metadata is not independently validated. Use the dated closeout test logs,
+without adding the overlapping RL suite. No causal adaptation paradox or
+real-world robustness is established. Gate C remains HOLD.
 
 The project is a synthetic campaign stress-testing prototype, not a deployed UPI
 system. It compares static, feedback-driven rule and learned tabular policies

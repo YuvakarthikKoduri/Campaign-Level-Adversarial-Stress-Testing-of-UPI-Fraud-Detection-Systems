@@ -1,3 +1,5 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](../README.md), [verification report](VERIFICATION_REPORT.md) and [handover](HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Gate B semantic feature implementation
 
 This is an explicit, fixture-only implementation of the approved `upi_source_attempt_features/2.0.0` contract. The legacy runner, simulator, detectors, training scripts, datasets, and models remain unchanged; none is silently switched to this path.

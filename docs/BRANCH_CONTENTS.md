@@ -1,4 +1,15 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](../README.md), [verification report](VERIFICATION_REPORT.md) and [handover](HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Academic prototype branch contents
+
+## Historical branch description
+
+The body describes the previous candidate, not the new private branch.
+Current branch is `research/mechanism-holdout-pilot` at uncommitted base HEAD
+`92a12966ec49fd6dcd147fd4d7411382715bc729`. See `../../FILE_CHANGES.md`,
+`../../HANDOVER.md` and `../../FINAL_AUDIT_REPORT.md`.
+No Gate C workflow is authorized; its existing documents are retained
+historical specifications, not readiness or execution approval.
 
 This branch packages the completed ordinary-development prototype from
 `/home/user/workspace/upi-prototype-dev`. Its parent is the inspected prototype

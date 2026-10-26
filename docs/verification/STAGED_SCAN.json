@@ -1,0 +1,7 @@
+{
+  "base": "92a12966ec49fd6dcd147fd4d7411382715bc729",
+  "files_scanned": 214,
+  "likely_secret_matches": [],
+  "files_over_15MB": [],
+  "note": "Full base-to-integration content scan; generated receipts are self-referential, so Git blob hashes remain authoritative. High-confidence text patterns and manual artifact/diff inspection are not a security certification."
+}

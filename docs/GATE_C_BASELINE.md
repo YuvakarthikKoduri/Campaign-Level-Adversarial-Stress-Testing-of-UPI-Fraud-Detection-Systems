@@ -1,3 +1,5 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](../README.md), [verification report](VERIFICATION_REPORT.md) and [handover](HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Gate C semantic baseline: implementation-only review
 
 This local implementation builds on accepted Gate B commit `6b543895769d4e355d775b05c3a3f01f3c1ca8ef`. It implements future execution interfaces, not an executed or accepted semantic dataset/model baseline.

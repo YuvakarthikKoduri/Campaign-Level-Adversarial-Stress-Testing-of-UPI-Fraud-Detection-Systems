@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="390" viewBox="0 0 1100 390" role="img">
+<title>Implemented UPI Fraud Stress Lab architecture</title>
+<desc>Local dashboard submits allowlisted commands to existing Python engines. Engines use synthetic data and detectors and write immutable evidence. Independent verifiers and result parsers feed the dashboard and paper.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="#20808d"/></marker></defs>
+<rect width="1100" height="390" fill="#f7f6f2"/>
+<g fill="#fff" stroke="#aab5b5">
+<rect x="35" y="55" width="235" height="95" rx="4"/><rect x="340" y="55" width="350" height="95" rx="4"/>
+<rect x="760" y="55" width="300" height="95" rx="4"/><rect x="340" y="240" width="350" height="100" rx="4"/>
+<rect x="760" y="240" width="300" height="100" rx="4"/>
+</g>
+<g fill="#28251d" font-family="sans-serif" text-anchor="middle" font-size="18">
+<text x="152" y="90">Local research dashboard</text><text x="152" y="120" font-size="14">Eleven views; no arbitrary shell</text>
+<text x="515" y="90">Allowlisted Python execution</text><text x="515" y="120" font-size="14">Legacy engine / matched pilot + ledger</text>
+<text x="910" y="90">Registered synthetic inputs</text><text x="910" y="120" font-size="14">XGBoost / Random Forest; frozen evaluation</text>
+<text x="515" y="275">Immutable evidence and checkpoints</text><text x="515" y="305" font-size="14">Configs, provenance, transactions, policies</text>
+<text x="910" y="275">Independent verification and analysis</text><text x="910" y="305" font-size="14">Reconstructed tables, figures and paper</text>
+</g>
+<g fill="none" stroke="#20808d" stroke-width="2" marker-end="url(#a)">
+<path d="M270 103H340"/><path d="M760 103H690"/><path d="M515 150V240"/><path d="M690 290H760"/>
+<path d="M1060 290H1080V20H152V55"/>
+</g>
+<g fill="#475c5d" font-family="sans-serif" font-size="14"><text x="540" y="200">raw outputs</text><text x="400" y="375">Synthetic research only. No real-world UPI validation. Gate C HOLD.</text></g>
+</svg>

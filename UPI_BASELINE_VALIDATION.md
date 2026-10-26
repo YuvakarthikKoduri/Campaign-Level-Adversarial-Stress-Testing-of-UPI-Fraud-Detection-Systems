@@ -1,4 +1,15 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # UPI Baseline Validation Report
+
+## Historical evidence boundary
+
+This dated report is retained for historical context, not a new validation
+of the current detector artifacts. Its AUC and performance statements are
+not independently validated historical results in this mission.
+Use `../FINAL_ACADEMIC_REPORT.md` and `../CONSOLIDATED_RESULTS.md` for
+traceable current measurements. Old detector-family holdout remains unverified;
+the new GE mechanism exclusion belongs to new models only. Gate C remains HOLD.
 
 **Date**: 2026-09-18  
 **Status**: ✅ BASELINE REBUILT AND VALIDATED  

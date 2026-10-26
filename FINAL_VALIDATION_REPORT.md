@@ -1,4 +1,16 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # UPI Fraud Stress Lab - Final Technical Completion Report
+
+## Historical record, not the current verdict
+
+The dated body below predates remediation and scientific strengthening.
+Its completion percentage, test total and production-readiness statement
+are not current evidence and must not be cited as the current project status.
+Use `../FINAL_ACADEMIC_REPORT.md`, `../FINAL_AUDIT_REPORT.md` and
+`../REQUIREMENT_AUDIT.md`. Current evidence supports only an exploratory
+synthetic academic study; no production or real-world robustness is established.
+Gate C remains HOLD. The original version is preserved unchanged outside this copy.
 
 **Date**: 2026-09-18  
 **Assessment**: **85% Functional Completion** (Verified)  

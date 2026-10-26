@@ -1,4 +1,14 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Source VPA Strategy Validation Report
+
+## Historical validation context
+
+This dated report is preserved context, not the current acceptance result.
+Its numerical outcomes and test counts must not be substituted for current
+recorded runs. The new matched pilot fixes one source and one sink and does
+not establish beneficiary-hopping generalization. Current scope and limits
+are in `../FINAL_ACADEMIC_REPORT.md` and `../FINAL_AUDIT_REPORT.md`.
 
 **Date:** 2026-09-18  
 **Status:** Environment/Modeling Validation (Pre-S1-S4)

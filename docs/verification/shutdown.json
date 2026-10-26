@@ -1,0 +1,10 @@
+{
+  "server": "localhost:8765",
+  "pid": 30586,
+  "termination": "SIGINT to the identified dashboard process",
+  "verified_http_unavailable_after_shutdown": true,
+  "active_job_before_shutdown": null,
+  "fresh_environment_restart_pid": 2911,
+  "fresh_environment_shutdown": "SIGINT did not close the idle background process; SIGTERM to the identified process did. HTTP port closure was verified.",
+  "note": "The actual UI test browser and the separate cloud research browser were closed. No active job was interrupted by service shutdown."
+}
