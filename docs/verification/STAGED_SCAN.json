@@ -1,7 +1,7 @@
 {
   "base": "92a12966ec49fd6dcd147fd4d7411382715bc729",
-  "files_scanned": 214,
+  "files_scanned": 225,
   "likely_secret_matches": [],
   "files_over_15MB": [],
-  "note": "Full base-to-integration content scan; generated receipts are self-referential, so Git blob hashes remain authoritative. High-confidence text patterns and manual artifact/diff inspection are not a security certification."
+  "note": "All base-to-feature changed files inspected; self-referential inventory hash uses Git. Pattern/size scan and manual diff/archive inspection are not security certification."
 }

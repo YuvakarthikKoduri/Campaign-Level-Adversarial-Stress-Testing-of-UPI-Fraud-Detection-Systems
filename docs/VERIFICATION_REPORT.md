@@ -86,3 +86,7 @@ The broad whitespace check reports preserved compiler/test-output whitespace, of
 `REQUIREMENT_STATUS.csv` records each mission part. Software/reproduction checks establish exercised behavior and record integrity only; they do not establish scientific generalization or external deployment validity. Read the [handover](HANDOVER.md), [paper instructions](../research/paper/README.md) and [external checks](../research/review_materials/EXTERNAL_CHECKS.md) before submission.
 
 Required human actions are approval of authors/institution, venue/page limit and the AI-assisted draft; use of university-approved checkers on the exact final document; an appropriate copyright-holder license decision; and review of the comprehensive PR without merging it automatically. Scientific validity is assessed only to the extent supported by the audit and recorded evidence. Gate C remains HOLD.
+
+## GitHub outcome
+
+[PR #1](https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems/pull/1) is open from the feature branch into `master`. No merge or automatic merge was requested, and the default branch was not pushed. The creation-time receipt, successful feature push and rejected workflow-scope attempt are preserved in `verification/`; there is no active GitHub CI result.

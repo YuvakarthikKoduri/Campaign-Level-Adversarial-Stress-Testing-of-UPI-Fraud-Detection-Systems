@@ -23,3 +23,8 @@ New source changes beyond inherited work are portable artifact restoration, path
 Supply authorized author/institution details, choose venue/page limit and approve the substantially AI-assisted draft. Obtain genuine university-approved AI-content and similarity reports for the exact final PDF; both are pending, not claimed below 10%. Select a project license with the copyright holders. Read faculty Q&A and rehearse the short live demonstration.
 
 Scientific limitations remain: high benign-shift false blocking, historical detector ancestry unavailable, narrow mechanism coverage, unequal offline costs, exploratory block count and no real-world validation. A successful test/PR does not remove them. Gate C stays HOLD; no default push or PR merge is authorized.
+## Publication receipt
+
+The complete feature package is available in [PR #1](https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems/pull/1), from `review/academic-dashboard-paper-v1` into `master`. It is open and unmerged; the receipt in `verification/GITHUB_RECEIPT.json` is a creation-time snapshot, while `git rev-parse HEAD` and the PR show the final tip including handover metadata.
+
+The local implementation/paper payload commit was `1f4b2b8d7cb8c5a7728e7511cf818dc81f92196c` before the final receipt-only update. CI activation is pending because OAuth lacks `workflow` scope; the unchanged non-executing template is in `docs/ci/`, and the rejected active-workflow commit remains preserved on local branch `review/academic-dashboard-paper-with-ci-local`.

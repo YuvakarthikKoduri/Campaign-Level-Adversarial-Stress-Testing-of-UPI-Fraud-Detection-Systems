@@ -13,7 +13,7 @@ Similarity threshold,PENDING EXTERNAL VERIFICATION,../research/review_materials/
 Study-ready repository package,COMPLETE,../README.md; REPRODUCIBILITY.md; HANDOVER.md,Project license requires copyright-holder decision
 Review presentation,COMPLETE,../research/review_materials/README.md,Rehearse and approve faculty materials
 Integrated tests and reproducibility,COMPLETE,verification/final-integrated-tests.xml; verification/fresh-short-demo.stdout,No expensive full study rerun
-Feature commits and comprehensive PR,PARTIAL,VERIFICATION_REPORT.md,Final GitHub receipt records publication outcome
+Feature commits and comprehensive PR,COMPLETE,verification/GITHUB_RECEIPT.json,PR 1 is open; no default-branch push or merge
 GitHub CI activation,PARTIAL,ci/README.md,OAuth lacks workflow scope; non-executing reviewed template provided
 Powered untouched-lockbox confirmation,BLOCKED,LIMITATIONS_AND_FUTURE_WORK.md,Not implemented; requires separate approved study
 External real-world UPI validation,BLOCKED,SECURITY_AND_ETHICS.md,Not implemented; requires approved real data and separate research

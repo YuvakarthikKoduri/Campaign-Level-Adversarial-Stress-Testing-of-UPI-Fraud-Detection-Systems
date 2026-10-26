@@ -1,5 +1,23 @@
 [
   {
+    "file": "DELIVERABLE_LINKS.jsonl",
+    "original_sha256": "e688e60c04f0c7916ca6398ccb89288bbe4b42fa224b6f20c7a4adff85587a7c",
+    "public_sha256": "e688e60c04f0c7916ca6398ccb89288bbe4b42fa224b6f20c7a4adff85587a7c",
+    "path_normalized": false
+  },
+  {
+    "file": "GITHUB_RECEIPT.json",
+    "original_sha256": "f119e0d83c3959febc4bbd450c46b336f67e405f397654c4ce02e2880b59e75c",
+    "public_sha256": "f119e0d83c3959febc4bbd450c46b336f67e405f397654c4ce02e2880b59e75c",
+    "path_normalized": false
+  },
+  {
+    "file": "academic-diff-check-02.stdout",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "path_normalized": false
+  },
+  {
     "file": "academic-diff-check.stdout",
     "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -123,6 +141,18 @@
     "file": "deck-text.md",
     "original_sha256": "68b11666de57348479f7e2ac8dc293d60e6a70d2561004427e5941bd916fd3a3",
     "public_sha256": "68b11666de57348479f7e2ac8dc293d60e6a70d2561004427e5941bd916fd3a3",
+    "path_normalized": false
+  },
+  {
+    "file": "feature-push-02.stderr",
+    "original_sha256": "f665cb2091c60f1a78136c550679c46b8ca24ac3f3834edb700e7bb98b2163b6",
+    "public_sha256": "f665cb2091c60f1a78136c550679c46b8ca24ac3f3834edb700e7bb98b2163b6",
+    "path_normalized": false
+  },
+  {
+    "file": "feature-push-02.stdout",
+    "original_sha256": "24a08453cd6bf267c167aae99171f9d44e17924d7b90cfb13a9a7e527757b8f6",
+    "public_sha256": "24a08453cd6bf267c167aae99171f9d44e17924d7b90cfb13a9a7e527757b8f6",
     "path_normalized": false
   },
   {
@@ -393,6 +423,18 @@
     "file": "post-race-tests.xml",
     "original_sha256": "e143f2bcaca805c339a5c02263a89a34e438ca4ac0d00d4b766b846ed8f59c7d",
     "public_sha256": "e143f2bcaca805c339a5c02263a89a34e438ca4ac0d00d4b766b846ed8f59c7d",
+    "path_normalized": false
+  },
+  {
+    "file": "pr-create.stderr",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "path_normalized": false
+  },
+  {
+    "file": "pr-create.stdout",
+    "original_sha256": "a4f0b4af563f547c5bda22fd521da082eda0b536b7f02800ca468b69a0da15d5",
+    "public_sha256": "a4f0b4af563f547c5bda22fd521da082eda0b536b7f02800ca468b69a0da15d5",
     "path_normalized": false
   },
   {
