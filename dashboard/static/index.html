@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Local synthetic fraud research workstation with real evidence, safe execution and traceable results.">
+  <title>UPI Fraud Stress Lab | Research workstation</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/vendor/lucide.min.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <aside class="rail" id="rail">
+    <div class="brand"><span>UPI</span><div>Fraud Stress Lab<small>Research workstation</small></div></div>
+    <div class="rail-label">Workspace</div><nav id="navigation" aria-label="Main navigation"></nav>
+    <div class="rail-bottom"><span class="dot"></span> Local execution only<small>Gate C <b>HOLD</b></small></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button id="menu" class="icon-button mobile-only" aria-label="Toggle navigation" aria-expanded="false"><i data-lucide="panel-left"></i></button>
+      <strong class="project-title">UPI Fraud Stress Lab</strong>
+      <div class="repo-context"><i data-lucide="git-branch"></i><span id="branch">Loading repository</span><code id="commit"></code></div>
+      <div class="header-status"><span id="active-status">Connecting</span><span class="badge synthetic">Synthetic research</span></div>
+    </header>
+    <div class="systemline"><span id="environment">Reading environment</span><span id="last-validation">Validation unavailable</span><button id="theme" class="text-button" aria-label="Switch to light theme"><i data-lucide="sun"></i> Light theme</button></div>
+    <main id="content" tabindex="-1">
+      <div class="page-heading"><div><div class="breadcrumb">Research / <span id="breadcrumb">Overview</span></div><h1 id="page-title">Overview</h1><p id="page-subtitle">Recorded outcomes, not production guarantees.</p></div><button id="run-short-top" class="primary"><i data-lucide="play"></i> New experiment</button></div>
+      <div id="alert" role="alert" hidden></div>
+      <section class="scope-panel" id="scope-panel" aria-label="Evidence selection">
+        <label>Evidence run<select id="run-select" aria-label="Evidence run"></select></label>
+        <div class="scope-meta"><span id="protocol">Loading</span><small id="evidence-status">Verifying imported file hashes</small></div>
+        <button id="refresh" class="icon-button" aria-label="Refresh evidence"><i data-lucide="refresh-cw"></i></button>
+        <a id="csv-export" class="secondary" href="/api/export" download><i data-lucide="download"></i> Export CSV</a>
+      </section>
+      <section id="filters" class="filters" aria-label="Result filters"></section>
+      <div id="page"><div class="loading">Reading recorded campaign evidence…</div></div>
+      <footer class="research-notice"><i data-lucide="shield-alert"></i><span>This is a synthetic research environment. Results do not establish real-world UPI fraud-detection effectiveness.</span></footer>
+    </main>
+  </div>
+  <dialog id="detail-dialog"><div class="dialog-head"><h2 id="detail-title">Evidence details</h2><button id="close-detail" class="icon-button" aria-label="Close details"><i data-lucide="x"></i></button></div><div id="detail-body"></div></dialog>
+  <dialog id="confirm-dialog"><h2>Confirm a larger research run</h2><p id="confirm-workload"></p><p>These are derived workload counts, not runtime estimates. A repeat is not independent replication. Outputs will be written to a fresh directory.</p><div class="actions"><button id="confirm-no" class="secondary">Go back</button><button id="confirm-yes" class="primary">Confirm and run</button></div></dialog>
+</body>
+</html>

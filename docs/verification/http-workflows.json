@@ -1,0 +1,1112 @@
+[
+  {
+    "id": "d67c3e6b2d994a20909a4aec43713426",
+    "kind": "legacy",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main",
+    "name": "review-legacy-main",
+    "mode": "main",
+    "workload": {
+      "evaluation_campaigns": 32,
+      "training_episodes": 12,
+      "note": "Derived episode counts, not a runtime estimate; repeat is not independent replication."
+    },
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "run_prototype.py",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main",
+      "--detector",
+      "both",
+      "--attacker",
+      "all",
+      "--seeds",
+      "101",
+      "--episodes",
+      "6",
+      "--campaigns",
+      "2",
+      "--max-steps",
+      "30"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u run_prototype.py --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main --detector both --attacker all --seeds 101 --episodes 6 --campaigns 2 --max-steps 30",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:43:35.409244+00:00",
+    "end": "2026-10-26T02:43:37.921085+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 2.511,
+    "counts": null,
+    "pid": 30118
+  },
+  {
+    "id": "ccf58b754c4c477ba8127a5e193131c7",
+    "kind": "legacy",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-repeat",
+    "name": "review-legacy-repeat",
+    "mode": "repeat",
+    "workload": {
+      "evaluation_campaigns": 32,
+      "training_episodes": 12,
+      "note": "Derived episode counts, not a runtime estimate; repeat is not independent replication."
+    },
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "run_prototype.py",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-repeat",
+      "--detector",
+      "both",
+      "--attacker",
+      "all",
+      "--seeds",
+      "101",
+      "--episodes",
+      "6",
+      "--campaigns",
+      "2",
+      "--max-steps",
+      "30",
+      "--flag-threshold",
+      "0.4",
+      "--block-threshold",
+      "0.7"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u run_prototype.py --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-repeat --detector both --attacker all --seeds 101 --episodes 6 --campaigns 2 --max-steps 30 --flag-threshold 0.4 --block-threshold 0.7",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:28.405310+00:00",
+    "end": "2026-10-26T02:45:30.817310+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 2.412,
+    "counts": null,
+    "pid": 30687
+  },
+  {
+    "id": "1a1f1e2c867a43f6ac263a118608d34c",
+    "kind": "legacy",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-reload",
+    "name": "review-legacy-reload",
+    "mode": "reload",
+    "workload": {
+      "evaluation_campaigns": 32,
+      "training_episodes": 0,
+      "note": "Derived episode counts, not a runtime estimate; repeat is not independent replication."
+    },
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "run_prototype.py",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-reload",
+      "--detector",
+      "both",
+      "--attacker",
+      "all",
+      "--seeds",
+      "101",
+      "--episodes",
+      "6",
+      "--campaigns",
+      "2",
+      "--max-steps",
+      "30",
+      "--policy-dir",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main",
+      "--flag-threshold",
+      "0.4",
+      "--block-threshold",
+      "0.7"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u run_prototype.py --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-reload --detector both --attacker all --seeds 101 --episodes 6 --campaigns 2 --max-steps 30 --policy-dir REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main --flag-threshold 0.4 --block-threshold 0.7",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:31.014805+00:00",
+    "end": "2026-10-26T02:45:33.225692+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 2.211,
+    "counts": null,
+    "pid": 30924
+  },
+  {
+    "id": "98237211aafc46638529c6243e379203",
+    "kind": "verify",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-check",
+    "name": "review-legacy-check",
+    "mode": "main",
+    "workload": null,
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "verify_prototype_outputs.py",
+      "--reference",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main",
+      "--repeat",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-repeat",
+      "--reload",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-reload",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-check/verification.json"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u verify_prototype_outputs.py --reference REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-main --repeat REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-repeat --reload REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-reload --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-legacy-check/verification.json",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:33.359818+00:00",
+    "end": "2026-10-26T02:45:33.768133+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 0.408,
+    "counts": null,
+    "pid": 31138,
+    "verification": {
+      "byte_equal": true,
+      "evidence_complete": true,
+      "passed": true,
+      "policies": {
+        "q_random_forest_101.json": {
+          "equal": true,
+          "sha256": "617628f79bf701c0b7d24b4d8c524da18bfd757b66fa8db6f4d8338163f10a39"
+        },
+        "q_xgboost_101.json": {
+          "equal": true,
+          "sha256": "ca69f3c6df7715732db326243e4c6c201ae166065d671f4f9bd120910745e8a4"
+        }
+      },
+      "reload": {
+        "campaigns.json": {
+          "equal": true,
+          "sha256": "bd81868c1bafd505cc0254568f9c7b51739bb6b41b5d1d40d7d7cf37c755f1cc"
+        },
+        "comparison.svg": {
+          "equal": true,
+          "sha256": "25bae21484d682a709c07e1d84204cd1d52e95a17a98ecf26a986147d431a104"
+        },
+        "per_seed.csv": {
+          "equal": true,
+          "sha256": "03e98a0f0df64c52c9d3b0a99159e576264e13cf67f9e4300d9f06b115cfc144"
+        },
+        "summary.csv": {
+          "equal": true,
+          "sha256": "b8a8b0bfdc51ab71ec6199e12b6a9726e66c34b80b950865b8670eddddceddb7"
+        },
+        "summary.json": {
+          "equal": true,
+          "sha256": "3a99ffd050c038b8e12be6cc9cf2a6f6caafe17e81c4727febf612b2c02a350f"
+        },
+        "transactions.csv": {
+          "equal": true,
+          "sha256": "1bcbd0258f6564ec813bd2f37adcafd389e544eda7ac5363005603508e296329"
+        }
+      },
+      "repeat": {
+        "campaigns.json": {
+          "equal": true,
+          "sha256": "bd81868c1bafd505cc0254568f9c7b51739bb6b41b5d1d40d7d7cf37c755f1cc"
+        },
+        "comparison.svg": {
+          "equal": true,
+          "sha256": "25bae21484d682a709c07e1d84204cd1d52e95a17a98ecf26a986147d431a104"
+        },
+        "learning.csv": {
+          "equal": true,
+          "sha256": "f9cdf67a67cb1420e70017d20de3694e702b245d6bedd261398cc89ac881599a"
+        },
+        "learning.svg": {
+          "equal": true,
+          "sha256": "37659fb12f98eb44d0f6a76aa8b7d74a68a3cc0252f544c8e0843c952b5d07c0"
+        },
+        "manifest.json": {
+          "equal": true,
+          "sha256": "96b563a4f711d94d48ae985fe2123ee42d9db8463ef87306bdb52f26d713af93"
+        },
+        "per_seed.csv": {
+          "equal": true,
+          "sha256": "03e98a0f0df64c52c9d3b0a99159e576264e13cf67f9e4300d9f06b115cfc144"
+        },
+        "summary.csv": {
+          "equal": true,
+          "sha256": "b8a8b0bfdc51ab71ec6199e12b6a9726e66c34b80b950865b8670eddddceddb7"
+        },
+        "summary.json": {
+          "equal": true,
+          "sha256": "3a99ffd050c038b8e12be6cc9cf2a6f6caafe17e81c4727febf612b2c02a350f"
+        },
+        "transactions.csv": {
+          "equal": true,
+          "sha256": "1bcbd0258f6564ec813bd2f37adcafd389e544eda7ac5363005603508e296329"
+        }
+      },
+      "scientific_validity": false,
+      "source_identity": {
+        "run_prototype.py": {
+          "equal": true
+        },
+        "src/__init__.py": {
+          "equal": true
+        },
+        "src/attackers/__init__.py": {
+          "equal": true
+        },
+        "src/attackers/adaptive.py": {
+          "equal": true
+        },
+        "src/attackers/family_based.py": {
+          "equal": true
+        },
+        "src/attackers/q_learning.py": {
+          "equal": true
+        },
+        "src/attackers/static.py": {
+          "equal": true
+        },
+        "src/campaigns/__init__.py": {
+          "equal": true
+        },
+        "src/campaigns/executor.py": {
+          "equal": true
+        },
+        "src/campaigns/generator.py": {
+          "equal": true
+        },
+        "src/campaigns/semantic_executor.py": {
+          "equal": true
+        },
+        "src/campaigns/timing.py": {
+          "equal": true
+        },
+        "src/campaigns/validator.py": {
+          "equal": true
+        },
+        "src/campaigns/vpa_strategy.py": {
+          "equal": true
+        },
+        "src/data/__init__.py": {
+          "equal": true
+        },
+        "src/data/loader.py": {
+          "equal": true
+        },
+        "src/data/preprocessor.py": {
+          "equal": true
+        },
+        "src/data/semantic_collection.py": {
+          "equal": true
+        },
+        "src/data/semantic_dataset.py": {
+          "equal": true
+        },
+        "src/data/semantic_entities.py": {
+          "equal": true
+        },
+        "src/data/semantic_generator.py": {
+          "equal": true
+        },
+        "src/data/semantic_provenance.py": {
+          "equal": true
+        },
+        "src/data/synthetic.py": {
+          "equal": true
+        },
+        "src/detectors/__init__.py": {
+          "equal": true
+        },
+        "src/detectors/baseline.py": {
+          "equal": true
+        },
+        "src/detectors/semantic.py": {
+          "equal": true
+        },
+        "src/detectors/semantic_model.py": {
+          "equal": true
+        },
+        "src/detectors/semantic_policy.py": {
+          "equal": true
+        },
+        "src/detectors/semantic_train.py": {
+          "equal": true
+        },
+        "src/detectors/train.py": {
+          "equal": true
+        },
+        "src/environment/__init__.py": {
+          "equal": true
+        },
+        "src/environment/entities.py": {
+          "equal": true
+        },
+        "src/environment/semantic.py": {
+          "equal": true
+        },
+        "src/environment/simulator.py": {
+          "equal": true
+        },
+        "src/environment/thresholds.py": {
+          "equal": true
+        },
+        "src/evaluation/__init__.py": {
+          "equal": true
+        },
+        "src/evaluation/metrics.py": {
+          "equal": true
+        },
+        "src/experiments/__init__.py": {
+          "equal": true
+        },
+        "src/experiments/config.py": {
+          "equal": true
+        },
+        "src/experiments/mechanism_pilot.py": {
+          "equal": true
+        },
+        "src/experiments/prototype.py": {
+          "equal": true
+        },
+        "src/experiments/prototype_plots.py": {
+          "equal": true
+        },
+        "src/experiments/scenarios.py": {
+          "equal": true
+        },
+        "src/features/__init__.py": {
+          "equal": true
+        },
+        "src/features/events.py": {
+          "equal": true
+        },
+        "src/features/extractor.py": {
+          "equal": true
+        },
+        "src/features/history.py": {
+          "equal": true
+        },
+        "src/features/schema.py": {
+          "equal": true
+        },
+        "src/money.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/__init__.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/authorization.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/cli.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/config.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/integrity.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/review.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/storage.py": {
+          "equal": true
+        },
+        "src/semantic_pipeline/workflow.py": {
+          "equal": true
+        },
+        "src/visualization/__init__.py": {
+          "equal": true
+        }
+      }
+    }
+  },
+  {
+    "id": "6bed40204a744bb59cb7c7f8554ae485",
+    "kind": "pilot",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main",
+    "name": "review-pilot-main",
+    "mode": "main",
+    "workload": {
+      "evaluation_campaigns": 40,
+      "training_episodes": 8,
+      "note": "Derived episode counts, not a runtime estimate; repeat is not independent replication."
+    },
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "-m",
+      "src.experiments.mechanism_pilot",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main",
+      "--blocks",
+      "1",
+      "--episodes",
+      "2",
+      "--contexts",
+      "2",
+      "--train-episodes",
+      "1000",
+      "--validation",
+      "400",
+      "--calibration",
+      "1000",
+      "--benign-test",
+      "400",
+      "--seed-base",
+      "71000"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u -m src.experiments.mechanism_pilot --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main --blocks 1 --episodes 2 --contexts 2 --train-episodes 1000 --validation 400 --calibration 1000 --benign-test 400 --seed-base 71000",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:34.031337+00:00",
+    "end": "2026-10-26T02:45:36.536314+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 2.505,
+    "counts": null,
+    "pid": 31227
+  },
+  {
+    "id": "a3ef968b0b1748f99b9a3eff966ad184",
+    "kind": "pilot",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-repeat",
+    "name": "review-pilot-repeat",
+    "mode": "repeat",
+    "workload": {
+      "evaluation_campaigns": 40,
+      "training_episodes": 8,
+      "note": "Derived episode counts, not a runtime estimate; repeat is not independent replication."
+    },
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "-m",
+      "src.experiments.mechanism_pilot",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-repeat",
+      "--blocks",
+      "1",
+      "--episodes",
+      "2",
+      "--contexts",
+      "2",
+      "--train-episodes",
+      "1000",
+      "--validation",
+      "400",
+      "--calibration",
+      "1000",
+      "--benign-test",
+      "400",
+      "--seed-base",
+      "71000"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u -m src.experiments.mechanism_pilot --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-repeat --blocks 1 --episodes 2 --contexts 2 --train-episodes 1000 --validation 400 --calibration 1000 --benign-test 400 --seed-base 71000",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:36.686337+00:00",
+    "end": "2026-10-26T02:45:39.197917+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 2.511,
+    "counts": null,
+    "pid": 31464
+  },
+  {
+    "id": "cc9e9f4f16d449b5873ee18af7e5857a",
+    "kind": "pilot",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-reload",
+    "name": "review-pilot-reload",
+    "mode": "reload",
+    "workload": {
+      "evaluation_campaigns": 40,
+      "training_episodes": 0,
+      "note": "Derived episode counts, not a runtime estimate; repeat is not independent replication."
+    },
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "-m",
+      "src.experiments.mechanism_pilot",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-reload",
+      "--blocks",
+      "1",
+      "--episodes",
+      "2",
+      "--contexts",
+      "2",
+      "--train-episodes",
+      "1000",
+      "--validation",
+      "400",
+      "--calibration",
+      "1000",
+      "--benign-test",
+      "400",
+      "--seed-base",
+      "71000",
+      "--reload-from",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u -m src.experiments.mechanism_pilot --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-reload --blocks 1 --episodes 2 --contexts 2 --train-episodes 1000 --validation 400 --calibration 1000 --benign-test 400 --seed-base 71000 --reload-from REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:39.315663+00:00",
+    "end": "2026-10-26T02:45:41.436101+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 2.12,
+    "counts": null,
+    "pid": 31699
+  },
+  {
+    "id": "2c648dac124744da814c6c4deb3fcc8b",
+    "kind": "verify",
+    "output": "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-check",
+    "name": "review-pilot-check",
+    "mode": "main",
+    "workload": null,
+    "expensive": false,
+    "timeout": 1800,
+    "argv": [
+      "PRIOR_ENV_ROOT/bin/python",
+      "-B",
+      "-s",
+      "-u",
+      "verify_mechanism_pilot.py",
+      "--reference",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main",
+      "--repeat",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-repeat",
+      "--reload",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-reload",
+      "--output",
+      "REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-check/verification.json"
+    ],
+    "command": "PRIOR_ENV_ROOT/bin/python -B -s -u verify_mechanism_pilot.py --reference REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-main --repeat REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-repeat --reload REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-reload --output REPOSITORY_ROOT/.local/dashboard-state/runs/review-pilot-check/verification.json",
+    "cwd": "REPOSITORY_ROOT",
+    "start": "2026-10-26T02:45:41.649223+00:00",
+    "end": "2026-10-26T02:45:42.155775+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "elapsed": 0.506,
+    "counts": null,
+    "pid": 31914,
+    "verification": {
+      "evidence_complete": true,
+      "checks": 9368,
+      "errors": [],
+      "td_updates_replayed": 24,
+      "campaigns": 40,
+      "fit_bindings": [
+        {
+          "block": 0,
+          "detector": "xgboost",
+          "model": "435dc0ec822d91b863ea3bfa70c33b71c1b55aa242ca168c24124023ea680716"
+        },
+        {
+          "block": 0,
+          "detector": "random_forest",
+          "model": "ea099a18f8cdd44f4a1d89b8c11dd2d3b382a79af3c4da1c6e0b18f5de93f690"
+        }
+      ],
+      "scientific_validity": "EXPLORATORY ONLY",
+      "matched_contrasts": [
+        {
+          "detector": "xgboost",
+          "contrast": "rule-static",
+          "block_differences": [
+            1
+          ],
+          "mean": 1,
+          "exploratory_percentile_interval": [
+            1,
+            1
+          ],
+          "warning": "Descriptive cluster bootstrap with few blocks; no confirmatory or equivalence claim"
+        },
+        {
+          "detector": "xgboost",
+          "contrast": "rl-blind_rl",
+          "block_differences": [
+            0
+          ],
+          "mean": 0,
+          "exploratory_percentile_interval": [
+            0,
+            0
+          ],
+          "warning": "Descriptive cluster bootstrap with few blocks; no confirmatory or equivalence claim"
+        },
+        {
+          "detector": "xgboost",
+          "contrast": "rl-zero_q",
+          "block_differences": [
+            0
+          ],
+          "mean": 0,
+          "exploratory_percentile_interval": [
+            0,
+            0
+          ],
+          "warning": "Descriptive cluster bootstrap with few blocks; no confirmatory or equivalence claim"
+        },
+        {
+          "detector": "random_forest",
+          "contrast": "rule-static",
+          "block_differences": [
+            0.5
+          ],
+          "mean": 0.5,
+          "exploratory_percentile_interval": [
+            0.5,
+            0.5
+          ],
+          "warning": "Descriptive cluster bootstrap with few blocks; no confirmatory or equivalence claim"
+        },
+        {
+          "detector": "random_forest",
+          "contrast": "rl-blind_rl",
+          "block_differences": [
+            0
+          ],
+          "mean": 0,
+          "exploratory_percentile_interval": [
+            0,
+            0
+          ],
+          "warning": "Descriptive cluster bootstrap with few blocks; no confirmatory or equivalence claim"
+        },
+        {
+          "detector": "random_forest",
+          "contrast": "rl-zero_q",
+          "block_differences": [
+            0.5
+          ],
+          "mean": 0.5,
+          "exploratory_percentile_interval": [
+            0.5,
+            0.5
+          ],
+          "warning": "Descriptive cluster bootstrap with few blocks; no confirmatory or equivalence claim"
+        }
+      ],
+      "metrics": [
+        {
+          "detector": "random_forest",
+          "family": "gradual_escalation",
+          "arm": "blind_rl",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 7435211,
+          "transactions": 13,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "gradual_escalation",
+          "arm": "rl",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 7435211,
+          "transactions": 13,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "gradual_escalation",
+          "arm": "rule",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 7435211,
+          "transactions": 10,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "gradual_escalation",
+          "arm": "static",
+          "n": 2,
+          "completion": 0.5,
+          "any_block": 0.5,
+          "any_flag": 0.5,
+          "conditional_first_block_seconds": 4800.0,
+          "conditional_first_flag_seconds": 4800.0,
+          "blocked_proposed_paise": 943460,
+          "gross_paise": 6491751,
+          "transactions": 10,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "gradual_escalation",
+          "arm": "zero_q",
+          "n": 2,
+          "completion": 0.5,
+          "any_block": 0.5,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 5100.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 791751,
+          "gross_paise": 6643460,
+          "transactions": 13,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "high_value_burst",
+          "arm": "blind_rl",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.5,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": 0.0,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 6449711,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "high_value_burst",
+          "arm": "rl",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.5,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": 0.0,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 6449711,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "high_value_burst",
+          "arm": "rule",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.5,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": 0.0,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 6449711,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "high_value_burst",
+          "arm": "static",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.5,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": 0.0,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 6449711,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "random_forest",
+          "family": "high_value_burst",
+          "arm": "zero_q",
+          "n": 2,
+          "completion": 0.5,
+          "any_block": 0.5,
+          "any_flag": 0.5,
+          "conditional_first_block_seconds": 1500.0,
+          "conditional_first_flag_seconds": 0.0,
+          "blocked_proposed_paise": 908113,
+          "gross_paise": 5541598,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "gradual_escalation",
+          "arm": "blind_rl",
+          "n": 2,
+          "completion": 0.5,
+          "any_block": 0.5,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 5100.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 791751,
+          "gross_paise": 6643460,
+          "transactions": 13,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "gradual_escalation",
+          "arm": "rl",
+          "n": 2,
+          "completion": 0.5,
+          "any_block": 0.5,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 5100.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 791751,
+          "gross_paise": 6643460,
+          "transactions": 13,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "gradual_escalation",
+          "arm": "rule",
+          "n": 2,
+          "completion": 1,
+          "any_block": 0.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": null,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 0,
+          "gross_paise": 7435211,
+          "transactions": 10,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "gradual_escalation",
+          "arm": "static",
+          "n": 2,
+          "completion": 0,
+          "any_block": 1.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 4800.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 2035211,
+          "gross_paise": 5400000,
+          "transactions": 10,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "gradual_escalation",
+          "arm": "zero_q",
+          "n": 2,
+          "completion": 0.5,
+          "any_block": 0.5,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 5100.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 791751,
+          "gross_paise": 6643460,
+          "transactions": 13,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "high_value_burst",
+          "arm": "blind_rl",
+          "n": 2,
+          "completion": 0,
+          "any_block": 1.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 2400.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 449711,
+          "gross_paise": 6000000,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "high_value_burst",
+          "arm": "rl",
+          "n": 2,
+          "completion": 0,
+          "any_block": 1.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 2400.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 449711,
+          "gross_paise": 6000000,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "high_value_burst",
+          "arm": "rule",
+          "n": 2,
+          "completion": 0,
+          "any_block": 1.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 600.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 449711,
+          "gross_paise": 6000000,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "high_value_burst",
+          "arm": "static",
+          "n": 2,
+          "completion": 0,
+          "any_block": 1.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 2400.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 449711,
+          "gross_paise": 6000000,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        },
+        {
+          "detector": "xgboost",
+          "family": "high_value_burst",
+          "arm": "zero_q",
+          "n": 2,
+          "completion": 0,
+          "any_block": 1.0,
+          "any_flag": 0.0,
+          "conditional_first_block_seconds": 1950.0,
+          "conditional_first_flag_seconds": null,
+          "blocked_proposed_paise": 1149711,
+          "gross_paise": 5300000,
+          "transactions": 6,
+          "interpretation": "Gross source debit, not unrecovered victim loss; event timing conditional on event"
+        }
+      ],
+      "benign": [
+        {
+          "block": 0,
+          "detector": "xgboost",
+          "stratum": "benign_mimic_test",
+          "n": 400,
+          "any_block": 0.3925,
+          "any_alert": 0.4425
+        },
+        {
+          "block": 0,
+          "detector": "xgboost",
+          "stratum": "benign_test",
+          "n": 400,
+          "any_block": 0,
+          "any_alert": 0.0225
+        },
+        {
+          "block": 0,
+          "detector": "random_forest",
+          "stratum": "benign_mimic_test",
+          "n": 400,
+          "any_block": 0.225,
+          "any_alert": 0.235
+        },
+        {
+          "block": 0,
+          "detector": "random_forest",
+          "stratum": "benign_test",
+          "n": 400,
+          "any_block": 0,
+          "any_alert": 0.01
+        }
+      ],
+      "equality": {
+        "repeat": {
+          "summary.csv": true,
+          "summary.json": true,
+          "config.json": true,
+          "source.json": true,
+          "block-00/evaluation_plan.json": true,
+          "block-00/validation_rows.csv": true,
+          "block-00/fit_rows.csv": true,
+          "block-00/quarantined.json": true,
+          "block-00/episodes.json": true,
+          "block-00/xgboost/blind_rl.json": true,
+          "block-00/xgboost/training.jsonl": true,
+          "block-00/xgboost/model.pkl": true,
+          "block-00/xgboost/rl.json": true,
+          "block-00/xgboost/fit_binding.json": true,
+          "block-00/xgboost/calibration.json": true,
+          "block-00/xgboost/campaigns.jsonl": true,
+          "block-00/xgboost/frozen_evaluation.json": true,
+          "block-00/xgboost/benign_scores.json": true,
+          "block-00/random_forest/blind_rl.json": true,
+          "block-00/random_forest/training.jsonl": true,
+          "block-00/random_forest/model.pkl": true,
+          "block-00/random_forest/rl.json": true,
+          "block-00/random_forest/fit_binding.json": true,
+          "block-00/random_forest/calibration.json": true,
+          "block-00/random_forest/campaigns.jsonl": true,
+          "block-00/random_forest/frozen_evaluation.json": true,
+          "block-00/random_forest/benign_scores.json": true
+        },
+        "reload": {
+          "summary.csv": true,
+          "summary.json": true,
+          "config.json": true,
+          "source.json": true,
+          "block-00/evaluation_plan.json": true,
+          "block-00/validation_rows.csv": true,
+          "block-00/fit_rows.csv": true,
+          "block-00/quarantined.json": true,
+          "block-00/episodes.json": true,
+          "block-00/xgboost/blind_rl.json": true,
+          "block-00/xgboost/model.pkl": true,
+          "block-00/xgboost/rl.json": true,
+          "block-00/xgboost/fit_binding.json": true,
+          "block-00/xgboost/calibration.json": true,
+          "block-00/xgboost/campaigns.jsonl": true,
+          "block-00/xgboost/frozen_evaluation.json": true,
+          "block-00/xgboost/benign_scores.json": true,
+          "block-00/random_forest/blind_rl.json": true,
+          "block-00/random_forest/model.pkl": true,
+          "block-00/random_forest/rl.json": true,
+          "block-00/random_forest/fit_binding.json": true,
+          "block-00/random_forest/calibration.json": true,
+          "block-00/random_forest/campaigns.jsonl": true,
+          "block-00/random_forest/frozen_evaluation.json": true,
+          "block-00/random_forest/benign_scores.json": true
+        }
+      },
+      "gate_c": "HOLD"
+    }
+  }
+]

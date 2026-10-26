@@ -148,7 +148,9 @@ class TestEnvironment(unittest.TestCase):
         response = self.environment.process_transaction(txn)
         self.assertIn('decision', response)
         self.assertIn('risk_score', response)
-        self.assertIn(response['decision'], ['ALLOW', 'BLOCK'])
+        self.assertIn(response['decision'], ['ALLOW', 'FLAG', 'BLOCK'])
+        self.assertEqual(response['decision'], self.environment.threshold_config.get_decision(
+            response['risk_score']).value)
 
     def test_account_balance_tracking(self):
         """Test that environment tracks transactions."""
@@ -181,7 +183,8 @@ class TestEnvironment(unittest.TestCase):
         }
 
         response = self.environment.process_transaction(txn)
-        self.assertEqual(response['decision'], 'BLOCK')
+        self.assertIsNone(response['decision'])
+        self.assertEqual(response['execution_status'], 'invalid')
 
 
 class TestCampaignExecution(unittest.TestCase):
@@ -337,7 +340,8 @@ class TestEdgeCases(unittest.TestCase):
         }
 
         response = self.environment.process_transaction(txn)
-        self.assertEqual(response['decision'], 'BLOCK')
+        self.assertIsNone(response['decision'])
+        self.assertEqual(response['execution_status'], 'invalid')
 
     def test_extremely_high_amount(self):
         """Test transaction with very high amount."""

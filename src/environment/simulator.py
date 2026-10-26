@@ -14,6 +14,7 @@ import logging
 
 from .entities import Account, VPA, Transaction
 from .thresholds import ThresholdConfig, RiskDecision, get_default_thresholds
+from src.money import at_least
 
 
 logger = logging.getLogger(__name__)
@@ -176,7 +177,7 @@ class UPIEnvironment:
                     return float(result), []
             except Exception as e:
                 logger.error(f"Fraud detector error: {e}")
-                return 0.5, ["detector_error"]
+                raise RuntimeError("Detector inference failed; research run is invalid") from e
 
     def _compute_upi_features(self, transaction: Transaction) -> Dict:
         """
@@ -198,13 +199,13 @@ class UPIEnvironment:
             t for t in self.transactions
             if t.from_vpa == transaction.from_vpa
             and t.timestamp.timestamp() > one_hour_ago
+            and t.timestamp <= transaction.timestamp
         ]
         velocity_1h = len(recent_from_vpa)
 
         # Check if VPA is new (not in our registered VPAs)
-        is_new_vpa = 0
-        if transaction.from_vpa not in self.vpas:
-            is_new_vpa = 1
+        is_new_vpa = int(not any(t.from_vpa == transaction.from_vpa
+                                 for t in self.transactions))
 
         return {
             "amount": amount,
@@ -233,119 +234,60 @@ class UPIEnvironment:
                 - status: Transaction status
                 - details: Additional information
         """
-        # Create transaction object
         try:
             transaction = Transaction.from_dict(transaction_data)
-        except Exception as e:
-            logger.error(f"Invalid transaction data: {e}")
-            return {
-                "transaction_id": None,
-                "risk_score": None,
-                "decision": "BLOCK",
-                "status": "failed",
-                "details": f"Invalid transaction data: {str(e)}"
-            }
+        except (ValueError, TypeError, KeyError) as exc:
+            return {"transaction_id": None, "decision": None, "status": "failed",
+                    "execution_status": "invalid", "amount_transferred": 0.0,
+                    "risk_score": None, "details": str(exc)}
 
-        # Auto-register unknown VPAs so campaigns work without manual setup
+        # Feature extraction and inference precede registration and all writes.
+        risk_score, risk_factors = self._calculate_risk_score(transaction)
+        if not isinstance(risk_score, (float, int)) or not 0 <= risk_score <= 1:
+            raise RuntimeError("Detector inference returned invalid probability")
+        transaction.update_risk_score(risk_score, risk_factors)
+        decision = self.threshold_config.get_decision(risk_score).value
+
+        # Legacy convenience registration; executor restricts the eligible pool.
         for vpa_id in [transaction.from_vpa, transaction.to_vpa]:
             if vpa_id not in self.vpas:
-                acct_id = f"acct_{vpa_id.replace('@', '_').replace('.', '_')}"
-                if acct_id not in self.accounts:
-                    self.create_account(acct_id, initial_balance=500000.0)
+                acct_id = f"acct:{vpa_id}"  # injective: no punctuation collisions
+                self.create_account(acct_id, initial_balance=500000.0)
                 self.create_vpa(vpa_id, acct_id, vpa_id)
-
-        # Get accounts
-        sender_account = self.get_account_by_vpa(transaction.from_vpa)
-        receiver_account = self.get_account_by_vpa(transaction.to_vpa)
-
-        if not sender_account or not receiver_account:
-            return {
-                "transaction_id": transaction.transaction_id,
-                "risk_score": None,
-                "decision": "BLOCK",
-                "status": "failed",
-                "details": "Account not found"
-            }
-
-        # Check sender balance
-        if sender_account.balance < transaction.amount:
+        sender = self.get_account_by_vpa(transaction.from_vpa)
+        receiver = self.get_account_by_vpa(transaction.to_vpa)
+        eligible = (sender.is_active and receiver.is_active
+                    and self.vpas[transaction.from_vpa].is_active
+                    and self.vpas[transaction.to_vpa].is_active
+                    and at_least(sender.balance, transaction.amount))
+        transferred = 0.0
+        if not eligible:
+            status, execution, details = "failed", "invalid", "Inactive or insufficient funds"
+            decision = None  # infeasibility is NOT a detector block
             transaction.mark_status("failed")
-            self.transactions.append(transaction)
             self.stats["failed"] += 1
-            return {
-                "transaction_id": transaction.transaction_id,
-                "risk_score": None,
-                "decision": "BLOCK",
-                "status": "failed",
-                "details": "Insufficient balance"
-            }
-
-        # Calculate risk score
-        risk_score, risk_factors = self._calculate_risk_score(transaction)
-        transaction.update_risk_score(risk_score, risk_factors)
-
-        # Get decision based on threshold
-        decision = self.threshold_config.get_decision(risk_score)
-
-        # Process based on decision
-        if decision == RiskDecision.BLOCK:
+        elif decision == "BLOCK":
+            status, execution, details = "blocked", "blocked", "Prevented by detector"
             transaction.mark_status("blocked")
-            self.transactions.append(transaction)
-            self.stats["total_transactions"] += 1
             self.stats["blocked"] += 1
-
-            return {
-                "transaction_id": transaction.transaction_id,
-                "risk_score": risk_score,
-                "decision": decision.value,
-                "status": "blocked",
-                "details": f"Transaction blocked due to high risk. Factors: {risk_factors}",
-                "features": transaction.features  # Include computed features
-            }
-
-        elif decision == RiskDecision.FLAG:
-            # Process transaction but flag it
-            if sender_account.debit(transaction.amount, transaction.transaction_id):
-                receiver_account.credit(transaction.amount, transaction.transaction_id)
-                transaction.mark_status("flagged")
-                self.transactions.append(transaction)
-                self.stats["total_transactions"] += 1
-                self.stats["flagged"] += 1
-
-                return {
-                    "transaction_id": transaction.transaction_id,
-                    "risk_score": risk_score,
-                    "decision": decision.value,
-                    "status": "success",
-                    "details": f"Transaction flagged for review. Factors: {risk_factors}",
-                    "features": transaction.features  # Include computed features
-                }
-
-        else:  # ALLOW
-            # Process transaction normally
-            if sender_account.debit(transaction.amount, transaction.transaction_id):
-                receiver_account.credit(transaction.amount, transaction.transaction_id)
-                transaction.mark_status("success")
-                self.transactions.append(transaction)
-                self.stats["total_transactions"] += 1
-                self.stats["allowed"] += 1
-
-                return {
-                    "transaction_id": transaction.transaction_id,
-                    "risk_score": risk_score,
-                    "decision": decision.value,
-                    "status": "success",
-                    "details": "Transaction processed successfully",
-                    "features": transaction.features  # Include computed features
-                }
-
-        # Should not reach here
+        else:
+            # Both accounts were validated before either side is mutated.
+            sender.debit(transaction.amount, transaction.transaction_id)
+            receiver.credit(transaction.amount, transaction.transaction_id)
+            transferred = transaction.amount
+            status, execution, details = "success", "success", "Transferred; no recovery simulated"
+            transaction.mark_status("flagged" if decision == "FLAG" else "success")
+            self.stats["flagged" if decision == "FLAG" else "allowed"] += 1
+        self.transactions.append(transaction)
+        self.stats["total_transactions"] += 1
         return {
-            "transaction_id": transaction.transaction_id,
-            "risk_score": risk_score,
-            "decision": "BLOCK",
-            "status": "failed",
-            "details": "Unexpected error"
+            "transaction_id": transaction.transaction_id, "risk_score": risk_score,
+            "risk_factors": risk_factors, "decision": decision, "status": status,
+            "execution_status": execution, "amount_transferred": transferred,
+            "from_vpa": transaction.from_vpa, "to_vpa": transaction.to_vpa,
+            "amount": transaction.amount, "timestamp": transaction.timestamp.isoformat(),
+            "details": details, "features": transaction.features,
+            "effective_policy": self.threshold_config.to_dict(),
         }
 
     def get_account_balance(self, vpa_id: str) -> Optional[float]:

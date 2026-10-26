@@ -1,0 +1,21 @@
+name: Review regression
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  local-research-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements-milestone1.lock
+      - run: python -B scripts/restore_evidence.py
+      - run: >-
+          python -B -m pytest tests/test_core.py tests/test_milestone1.py tests/test_gate_b.py
+          tests/test_prototype_rl.py tests/test_mechanism_pilot.py tests/test_mechanism_cli.py
+          tests/test_artifact_restore.py test_timing.py test_vpa_strategies.py examples/test_environment.py
+          closeout-tests/test_independent.py f5-evidence/test_schema.py dashboard/test_dashboard.py -q
+      - run: python -B scripts/reproduce_paper.py

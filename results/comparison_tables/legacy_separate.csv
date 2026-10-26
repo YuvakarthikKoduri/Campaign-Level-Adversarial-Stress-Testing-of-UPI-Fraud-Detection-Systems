@@ -1,0 +1,17 @@
+experiment,detector,workload,strategy,campaigns,completed,completion_pct,seeds
+legacy-corrected,random_forest,known,adaptive,72,72,100.0,3
+legacy-corrected,random_forest,known,rl,72,71,98.61111111111111,3
+legacy-corrected,random_forest,known,static,72,72,100.0,3
+legacy-corrected,random_forest,known,untrained_rl,72,42,58.333333333333336,3
+legacy-corrected,random_forest,unknown,adaptive,72,70,97.22222222222223,3
+legacy-corrected,random_forest,unknown,rl,72,72,100.0,3
+legacy-corrected,random_forest,unknown,static,72,68,94.44444444444444,3
+legacy-corrected,random_forest,unknown,untrained_rl,72,72,100.0,3
+legacy-corrected,xgboost,known,adaptive,72,72,100.0,3
+legacy-corrected,xgboost,known,rl,72,72,100.0,3
+legacy-corrected,xgboost,known,static,72,72,100.0,3
+legacy-corrected,xgboost,known,untrained_rl,72,42,58.333333333333336,3
+legacy-corrected,xgboost,unknown,adaptive,72,71,98.61111111111111,3
+legacy-corrected,xgboost,unknown,rl,72,72,100.0,3
+legacy-corrected,xgboost,unknown,static,72,65,90.27777777777777,3
+legacy-corrected,xgboost,unknown,untrained_rl,72,72,100.0,3

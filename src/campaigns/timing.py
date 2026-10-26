@@ -92,11 +92,13 @@ class CampaignTimer:
         """
         self.family = family
         self.timing_model = TIMING_MODELS[family]
-        self.current_time = start_time or datetime.now()
+        self.start_time = start_time or datetime(2026, 1, 5, 12)
+        self.current_time = self.start_time
         self.transaction_count = 0
 
         # Use seeded random for reproducible timing
-        self.random = random.Random(seed)
+        self.seed = 42 if seed is None else seed
+        self.random = random.Random(self.seed)
 
     def next_transaction_time(self) -> datetime:
         """
@@ -132,8 +134,9 @@ class CampaignTimer:
 
     def reset(self, start_time: Optional[datetime] = None):
         """Reset timer for new campaign."""
-        self.current_time = start_time or datetime.now()
+        self.current_time = start_time or self.start_time
         self.transaction_count = 0
+        self.random = random.Random(self.seed)
 
 
 def get_timing_model(family: CampaignFamily) -> TimingModel:

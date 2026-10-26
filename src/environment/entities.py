@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 from datetime import datetime
 import uuid
+import math
+from src.money import add_money, subtract_money, at_least
 
 
 @dataclass
@@ -46,8 +48,8 @@ class Account:
         if not self.is_active:
             return False
 
-        if self.balance >= amount:
-            self.balance -= amount
+        if at_least(self.balance, amount):
+            self.balance = subtract_money(self.balance, amount)
             self.transaction_history.append(transaction_id)
             return True
         return False
@@ -69,7 +71,7 @@ class Account:
         if not self.is_active:
             return False
 
-        self.balance += amount
+        self.balance = add_money(self.balance, amount)
         self.transaction_history.append(transaction_id)
         return True
 
@@ -151,12 +153,16 @@ class Transaction:
 
     def __post_init__(self):
         """Validate transaction data"""
-        if self.amount <= 0:
+        if not isinstance(self.amount, (int, float)) or not math.isfinite(self.amount) or self.amount <= 0:
             raise ValueError("Transaction amount must be positive")
         if not self.from_vpa or not self.to_vpa:
             raise ValueError("Both from_vpa and to_vpa must be specified")
         if self.from_vpa == self.to_vpa:
             raise ValueError("Cannot transfer to the same VPA")
+        if "@" not in self.from_vpa or "@" not in self.to_vpa:
+            raise ValueError("VPAs must contain @")
+        if not isinstance(self.timestamp, datetime):
+            raise ValueError("timestamp must be a datetime")
 
     def add_feature(self, feature_name: str, feature_value) -> None:
         """Add a feature for fraud detection"""

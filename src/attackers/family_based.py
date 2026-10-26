@@ -23,8 +23,9 @@ class GradualEscalationAttacker:
     This differs from training fraud which typically starts high.
     """
 
-    def __init__(self, fraud_type: str = "unknown"):
+    def __init__(self, fraud_type: str = "unknown", adaptive=True, seed=None):
         self.fraud_type = fraud_type
+        self.adaptive, self.random = adaptive, random.Random(seed)
         self.step = 0
         self.history = []
         self.timer = None  # Set by campaign execution
@@ -58,12 +59,13 @@ class GradualEscalationAttacker:
         if self.vpa_selector:
             from_account = self.vpa_selector.select_source_vpa()
         else:
-            from_account = random.choice(accounts)
+            from_account = self.random.choice(accounts)
 
-        to_account = random.choice([a for a in accounts if a != from_account])
+        to_account = self.random.choice([a for a in accounts if a != from_account])
 
         # Add small randomness to current amount
-        amount = self.current_amount * random.uniform(0.95, 1.05)
+        base = self.current_amount if self.adaptive else min(25000, 500 * 1.3 ** (self.step - 1))
+        amount = base * self.random.uniform(0.95, 1.05)
         amount = max(self.min_amount, min(amount, self.max_amount))
 
         transaction = {
@@ -85,6 +87,8 @@ class GradualEscalationAttacker:
         Observe response and adjust escalation strategy.
         """
         self.history.append(response)
+        if not self.adaptive:
+            return
         decision = response.get("decision", "UNKNOWN")
 
         if decision == "BLOCK":
@@ -128,8 +132,9 @@ class BeneficiaryHoppingAttacker:
     This differs from training fraud which may reuse beneficiaries.
     """
 
-    def __init__(self, fraud_type: str = "unknown"):
+    def __init__(self, fraud_type: str = "unknown", adaptive=True, seed=None):
         self.fraud_type = fraud_type
+        self.adaptive, self.random = adaptive, random.Random(seed)
         self.step = 0
         self.history = []
         self.timer = None  # Set by campaign execution
@@ -161,7 +166,7 @@ class BeneficiaryHoppingAttacker:
         if self.vpa_selector:
             from_account = self.vpa_selector.select_source_vpa()
         else:
-            from_account = random.choice(accounts)
+            from_account = self.random.choice(accounts)
 
         # Pick FRESH beneficiary (minimize reuse)
         unused_beneficiaries = [
@@ -174,11 +179,11 @@ class BeneficiaryHoppingAttacker:
             self.beneficiary_use_count.clear()
             unused_beneficiaries = [a for a in accounts if a != from_account]
 
-        to_account = random.choice(unused_beneficiaries)
+        to_account = self.random.choice(unused_beneficiaries)
         self.beneficiary_use_count[to_account] = self.beneficiary_use_count.get(to_account, 0) + 1
 
         # Moderate amounts with variation
-        amount = self.base_amount * random.uniform(0.8, 1.2)
+        amount = self.base_amount * self.random.uniform(0.8, 1.2)
 
         transaction = {
             "from_vpa": from_account,
@@ -199,12 +204,16 @@ class BeneficiaryHoppingAttacker:
         Observe response and adjust hopping strategy.
         """
         self.history.append(response)
+        if not self.adaptive:
+            return
         decision = response.get("decision", "UNKNOWN")
 
         if decision == "BLOCK":
             self.blocked_count += 1
             # Reduce amount slightly if blocked
             self.base_amount *= 0.9
+        elif decision == "FLAG":
+            self.base_amount *= 0.95
 
         elif decision == "ALLOW":
             self.blocked_count = 0  # Reset
@@ -222,3 +231,15 @@ class BeneficiaryHoppingAttacker:
             "unique_beneficiaries": len(self.beneficiary_use_count),
             "base_amount": self.base_amount
         }
+
+
+def make_attacker(family, adaptive, seed):
+    """Same policy family and initial state; only feedback adaptation is toggled."""
+    from src.campaigns.generator import CampaignFamily
+    from src.attackers.adaptive import AdaptiveAttacker
+    if family == CampaignFamily.GRADUAL_ESCALATION:
+        return GradualEscalationAttacker(adaptive=adaptive, seed=seed)
+    if family == CampaignFamily.BENEFICIARY_HOPPING:
+        return BeneficiaryHoppingAttacker(adaptive=adaptive, seed=seed)
+    return AdaptiveAttacker("known" if family == CampaignFamily.HIGH_VALUE_BURST else "unknown",
+                            adaptive=adaptive, seed=seed)

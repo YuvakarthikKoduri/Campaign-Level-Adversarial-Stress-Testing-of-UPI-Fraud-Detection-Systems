@@ -1,0 +1,29 @@
+92a1296 (origin/prototype/rl-academic-complete) feat: complete reproducible academic RL campaign prototype
+c263402 fix: make synthetic family mixture explicit in versioned config
+d5021a6 docs: define Gate C review boundary and execution limitations
+b6dc764 feat: implement approval-gated semantic baseline interfaces
+2d26f02 test: add literal Gate C scope and integrity regressions
+6b54389 feat: stage semantic simulation atomically with Gate B regression evidence
+7b88076 feat: define versioned semantic features and admitted replay contract
+def758a (origin/repair/milestone-1-correctness-reproducibility) test: verify repair gates and document corrected-v2 contracts
+172872c fix: pair workloads, isolate feedback and persist deterministic non-overwriting runs
+728fcfc fix: reconcile transfers, event-time metrics, features and inference errors
+f0b7424 test: capture milestone 1 correctness and reproducibility regressions
+1e2ca9e (HEAD -> master, origin/master, origin/HEAD) Add comprehensive test run report and validation
+275d088 Update README with comprehensive setup and usage guide
+d1fc461 Add dataset and trained models to repository
+5958670 Clean up repository and update final validation report
+783f0f5 Implement configurable source-VPA strategies for realistic velocity
+8bfd048 Rebuild UPI baseline detectors with proper training and validation
+5834f94 Add model baseline audit identifying detector misconfiguration
+6f8a156 Add validation report for environmental artifact fix
+34d060a Fix environmental velocity accumulation artifact
+37ea90b Document critical research findings and environmental artifact
+ad40c8c Complete validator fix and add final validation report
+3302b4a Fix critical campaign family diversity bug and achieve 100% test pass rate
+78ed040 Reach 80% completion: Multi-detector integration and expanded testing
+b84fdff Complete Phases 1-9: Reach ~78% functional completion
+fa04cc0 Implement core stress-testing improvements for Second Review
+391cbf3 Replace credit-card dependency with synthetic UPI detector
+6725914 Fix integration bugs in demo, experiments, and environment
+be159c4 Initial commit: UPI Fraud Stress Lab foundation

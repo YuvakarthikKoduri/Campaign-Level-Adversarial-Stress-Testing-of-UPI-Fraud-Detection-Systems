@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Cite the exact reviewed commit and artifact hashes; academic authorship is pending researcher approval."
+title: "UPI Fraud Stress Lab: An Exploratory Synthetic Campaign-Level Research Workstation"
+type: software
+authors:
+  - name: "UPI Fraud Stress Lab contributors"
+repository-code: "https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems"
+keywords:
+  - synthetic fraud research
+  - adversarial evaluation
+  - reproducibility

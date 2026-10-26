@@ -1,0 +1,150 @@
+{
+  "known": [
+    {
+      "campaign_id": "999-known-0000",
+      "family": "high_value_burst",
+      "fraud_type": "known",
+      "is_fraud": true,
+      "policy_seed": 4696242754978391235,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 25751.92,
+      "timer_seed": 15658808103455797266,
+      "vpa_seed": 7968674682261620255,
+      "vpa_strategy": "single_compromised_vpa"
+    },
+    {
+      "campaign_id": "999-known-0001",
+      "family": "high_value_burst",
+      "fraud_type": "known",
+      "is_fraud": true,
+      "policy_seed": 7252538643940483869,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 32234.48,
+      "timer_seed": 15902449878310676798,
+      "vpa_seed": 13434180168163644545,
+      "vpa_strategy": "single_compromised_vpa"
+    },
+    {
+      "campaign_id": "999-known-0002",
+      "family": "high_value_burst",
+      "fraud_type": "known",
+      "is_fraud": true,
+      "policy_seed": 2158283001386305293,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 25909.05,
+      "timer_seed": 12195578042987244521,
+      "vpa_seed": 7951067371624638463,
+      "vpa_strategy": "single_compromised_vpa"
+    },
+    {
+      "campaign_id": "999-known-0003",
+      "family": "high_value_burst",
+      "fraud_type": "known",
+      "is_fraud": true,
+      "policy_seed": 6868430079932825980,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 33748.41,
+      "timer_seed": 16635294388339907619,
+      "vpa_seed": 10127685423917159816,
+      "vpa_strategy": "single_compromised_vpa"
+    },
+    {
+      "campaign_id": "999-known-0004",
+      "family": "high_value_burst",
+      "fraud_type": "known",
+      "is_fraud": true,
+      "policy_seed": 12600477399673588815,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 37640.54,
+      "timer_seed": 14591479126318835433,
+      "vpa_seed": 9679764012107567316,
+      "vpa_strategy": "single_compromised_vpa"
+    },
+    {
+      "campaign_id": "999-known-0005",
+      "family": "high_value_burst",
+      "fraud_type": "known",
+      "is_fraud": true,
+      "policy_seed": 8176796999780632884,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 25463.23,
+      "timer_seed": 858663536201070537,
+      "vpa_seed": 16854207271771246427,
+      "vpa_strategy": "single_compromised_vpa"
+    }
+  ],
+  "unknown": [
+    {
+      "campaign_id": "999-unknown-0000",
+      "family": "slow_drain",
+      "fraud_type": "unknown",
+      "is_fraud": true,
+      "policy_seed": 14457078339109686295,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 11002.36,
+      "timer_seed": 13826937572348224308,
+      "vpa_seed": 12838011744464502132,
+      "vpa_strategy": "mixed_reuse"
+    },
+    {
+      "campaign_id": "999-unknown-0001",
+      "family": "gradual_escalation",
+      "fraud_type": "unknown",
+      "is_fraud": true,
+      "policy_seed": 11302355064734485271,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 18887.18,
+      "timer_seed": 4065833320494542452,
+      "vpa_seed": 8705886758425082132,
+      "vpa_strategy": "mixed_reuse"
+    },
+    {
+      "campaign_id": "999-unknown-0002",
+      "family": "beneficiary_hopping",
+      "fraud_type": "unknown",
+      "is_fraud": true,
+      "policy_seed": 3656087703541383966,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 16384.35,
+      "timer_seed": 2155325968704077697,
+      "vpa_seed": 2528669391141914918,
+      "vpa_strategy": "mixed_reuse"
+    },
+    {
+      "campaign_id": "999-unknown-0003",
+      "family": "slow_drain",
+      "fraud_type": "unknown",
+      "is_fraud": true,
+      "policy_seed": 17830321409389244352,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 18837.29,
+      "timer_seed": 17530523663331087465,
+      "vpa_seed": 5306111410816254941,
+      "vpa_strategy": "mixed_reuse"
+    },
+    {
+      "campaign_id": "999-unknown-0004",
+      "family": "gradual_escalation",
+      "fraud_type": "unknown",
+      "is_fraud": true,
+      "policy_seed": 4417644012454339443,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 10530.93,
+      "timer_seed": 5542100324391987044,
+      "vpa_seed": 10000576332182924987,
+      "vpa_strategy": "mixed_reuse"
+    },
+    {
+      "campaign_id": "999-unknown-0005",
+      "family": "beneficiary_hopping",
+      "fraud_type": "unknown",
+      "is_fraud": true,
+      "policy_seed": 307428801141308194,
+      "start_time": "2026-01-05T12:00:00",
+      "target_amount": 11555.56,
+      "timer_seed": 11095269565146266679,
+      "vpa_seed": 9419620222603869257,
+      "vpa_strategy": "mixed_reuse"
+    }
+  ]
+}

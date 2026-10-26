@@ -1,0 +1,58 @@
+{
+  "totals": {
+    "campaigns": 7200,
+    "completed": 3539,
+    "transactions": 28895,
+    "gross_paise": 19230099632,
+    "ALLOW": 24634,
+    "BLOCK": 3661,
+    "FLAG": 600
+  },
+  "benign": [
+    {
+      "experiment": "mechanism-pilot-v1",
+      "detector": "random_forest",
+      "stratum": "benign_mimic_test",
+      "n": 3600,
+      "blocked": 461,
+      "alerted": 536,
+      "block_pct": 12.805555555555555,
+      "alert_pct": 14.88888888888889
+    },
+    {
+      "experiment": "mechanism-pilot-v1",
+      "detector": "random_forest",
+      "stratum": "benign_test",
+      "n": 3600,
+      "blocked": 0,
+      "alerted": 96,
+      "block_pct": 0.0,
+      "alert_pct": 2.6666666666666665
+    },
+    {
+      "experiment": "mechanism-pilot-v1",
+      "detector": "xgboost",
+      "stratum": "benign_mimic_test",
+      "n": 3600,
+      "blocked": 1738,
+      "alerted": 1862,
+      "block_pct": 48.27777777777778,
+      "alert_pct": 51.72222222222222
+    },
+    {
+      "experiment": "mechanism-pilot-v1",
+      "detector": "xgboost",
+      "stratum": "benign_test",
+      "n": 3600,
+      "blocked": 0,
+      "alerted": 56,
+      "block_pct": 0.0,
+      "alert_pct": 1.5555555555555556
+    }
+  ],
+  "checks": 44608,
+  "legacy_campaigns": 1152,
+  "legacy_transactions": 4161,
+  "analysis_seed": 20261026,
+  "bootstrap_draws": 10000
+}

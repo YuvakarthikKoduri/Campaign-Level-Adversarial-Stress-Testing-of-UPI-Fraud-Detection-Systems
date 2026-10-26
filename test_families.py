@@ -22,7 +22,7 @@ from src.attackers.adaptive import AdaptiveAttacker
 from src.attackers.family_based import GradualEscalationAttacker, BeneficiaryHoppingAttacker
 
 
-def test_campaign_family(family_name: str, campaign, attacker, detector, environment, accounts):
+def run_campaign_family(family_name: str, campaign, attacker, detector, environment, accounts):
     """Test a single campaign family."""
     print(f"\n{'='*70}")
     print(f"TESTING: {family_name}")
@@ -76,7 +76,7 @@ def main():
     # Test 1: High-Value Burst (Known)
     campaign1 = generator.create_known_fraud_campaign()
     attacker1 = StaticAttacker(fraud_type="known")
-    result1 = test_campaign_family(
+    result1 = run_campaign_family(
         "HIGH-VALUE BURST (Known/Static)",
         campaign1, attacker1, detector, environment, accounts
     )
@@ -88,7 +88,7 @@ def main():
     # Test 2: Slow Drain (Unknown)
     campaign2 = generator.create_unknown_fraud_campaign()
     attacker2 = StaticAttacker(fraud_type="unknown")
-    result2 = test_campaign_family(
+    result2 = run_campaign_family(
         "SLOW DRAIN (Unknown/Static)",
         campaign2, attacker2, detector, environment, accounts
     )
@@ -99,7 +99,7 @@ def main():
     # Test 3: Gradual Escalation
     campaign3 = generator.create_gradual_escalation_campaign()
     attacker3 = GradualEscalationAttacker(fraud_type="unknown")
-    result3 = test_campaign_family(
+    result3 = run_campaign_family(
         "GRADUAL ESCALATION (Unseen/Adaptive)",
         campaign3, attacker3, detector, environment, accounts
     )
@@ -110,7 +110,7 @@ def main():
     # Test 4: Beneficiary Hopping
     campaign4 = generator.create_beneficiary_hopping_campaign()
     attacker4 = BeneficiaryHoppingAttacker(fraud_type="unknown")
-    result4 = test_campaign_family(
+    result4 = run_campaign_family(
         "BENEFICIARY HOPPING (Unseen/Adaptive)",
         campaign4, attacker4, detector, environment, accounts
     )
@@ -130,9 +130,9 @@ def main():
     print("="*70)
     print("\nKey Observations:")
     print("- Each family demonstrates DISTINCT behavioral mechanism")
-    print("- Success rates vary by family, showing detector blind spots")
-    print("- Gradual escalation and beneficiary hopping are genuinely 'unseen'")
-    print("  (mechanisms not represented in training fraud distribution)")
+    print("- These are single-campaign demonstrations, not estimated success rates")
+    print("- Family mechanisms differ by construction; held-out generalization")
+    print("  requires separate training/tuning provenance and evaluation")
 
 
 if __name__ == "__main__":

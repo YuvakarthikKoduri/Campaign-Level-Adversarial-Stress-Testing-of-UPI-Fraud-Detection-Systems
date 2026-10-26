@@ -1,0 +1,7 @@
+detector,contrast,n_blocks,n_paired_contexts,difference_pp,ci_low_pp,ci_high_pp,method
+xgboost,rule minus static,9,360,73.61111111111111,65.55555555555556,82.22222222222221,Exploratory paired block percentile bootstrap; 10000 draws; seed 20261026; unadjusted
+xgboost,rl minus blind_rl,9,360,1.1111111111111114,-5.0,6.666666666666667,Exploratory paired block percentile bootstrap; 10000 draws; seed 20261026; unadjusted
+xgboost,rl minus zero_q,9,360,-7.5,-16.944444444444446,3.0555555555555554,Exploratory paired block percentile bootstrap; 10000 draws; seed 20261026; unadjusted
+random_forest,rule minus static,9,360,28.888888888888886,24.444444444444443,33.61111111111111,Exploratory paired block percentile bootstrap; 10000 draws; seed 20261026; unadjusted
+random_forest,rl minus blind_rl,9,360,2.222222222222222,-4.444444444444445,8.888888888888888,Exploratory paired block percentile bootstrap; 10000 draws; seed 20261026; unadjusted
+random_forest,rl minus zero_q,9,360,6.666666666666667,2.7777777777777777,10.0,Exploratory paired block percentile bootstrap; 10000 draws; seed 20261026; unadjusted

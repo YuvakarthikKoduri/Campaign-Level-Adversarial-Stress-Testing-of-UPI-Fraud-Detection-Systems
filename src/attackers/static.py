@@ -15,7 +15,7 @@ class StaticAttacker:
     Does not react to detector feedback.
     """
 
-    def __init__(self, fraud_type: str = "known"):
+    def __init__(self, fraud_type: str = "known", seed=None):
         """
         Initialize static attacker.
 
@@ -23,6 +23,7 @@ class StaticAttacker:
             fraud_type: "known" or "unknown"
         """
         self.fraud_type = fraud_type
+        self.random = random.Random(seed)
         self.step = 0
         self.timer = None  # Set by campaign execution
         self.vpa_selector = None  # Set by campaign execution
@@ -65,15 +66,15 @@ class StaticAttacker:
         - Fast succession
         - Direct transfers
         """
-        amount = random.uniform(10000, 50000)
+        amount = self.random.uniform(10000, 50000)
 
         # Use VPA selector if available, otherwise random
         if self.vpa_selector:
             from_account = self.vpa_selector.select_source_vpa()
         else:
-            from_account = random.choice(accounts)
+            from_account = self.random.choice(accounts)
 
-        to_account = random.choice([a for a in accounts if a != from_account])
+        to_account = self.random.choice([a for a in accounts if a != from_account])
 
         transaction = {
             "from_vpa": from_account,
@@ -102,15 +103,15 @@ class StaticAttacker:
         - Gradual movement
         - Multiple hops
         """
-        amount = random.uniform(1000, 5000)
+        amount = self.random.uniform(1000, 5000)
 
         # Use VPA selector if available, otherwise random
         if self.vpa_selector:
             from_account = self.vpa_selector.select_source_vpa()
         else:
-            from_account = random.choice(accounts)
+            from_account = self.random.choice(accounts)
 
-        to_account = random.choice([a for a in accounts if a != from_account])
+        to_account = self.random.choice([a for a in accounts if a != from_account])
 
         transaction = {
             "from_vpa": from_account,

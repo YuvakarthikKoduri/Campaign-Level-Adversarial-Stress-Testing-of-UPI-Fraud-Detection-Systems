@@ -1,4 +1,14 @@
+> HISTORICAL SCOPE RECORD: The body below retains earlier claims and workspace paths, not current acceptance. Use the [current README](README.md), [verification report](docs/VERIFICATION_REPORT.md) and [handover](docs/HANDOVER.md) for present commands, counts and limitations. Historical completion/AUC/novelty/production claims are not adopted. Gate C remains HOLD.
+
 # Realistic Velocity Validation Report
+
+## Historical simulator validation
+
+“Realistic” in the dated body is not evidence of real UPI traffic or production
+robustness. Current feature-boundary tests and independently reconstructed
+synthetic traces are described in `../FINAL_AUDIT_REPORT.md`.
+Do not treat older metrics or counts below as this mission's results.
+No external real-world validation is established; Gate C remains HOLD.
 
 **Date**: 2026-09-18  
 **Status**: ⚠️ PARTIAL IMPLEMENTATION - Timing Fixed, VPA Model Still Unrealistic  

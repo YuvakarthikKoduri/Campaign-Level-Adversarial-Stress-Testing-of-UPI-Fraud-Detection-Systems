@@ -1,0 +1,71 @@
+{
+  "format": "upi_gate_c_config/1",
+  "base_commit": "6b543895769d4e355d775b05c3a3f01f3c1ca8ef",
+  "synthetic_engineering_assumptions": true,
+  "feature_metadata": {
+    "contract_id": "upi_source_attempt_features/2.0.0",
+    "schema_digest": "266229071e446f99808db20f48ce93a2f63a838980e2bb0323d4b670d93a10ad",
+    "extractor_source_digest": "37358317a4b3c0419ea39e2c0a4fe1411392beab3eca943bf251011b98b3a605"
+  },
+  "root_seed": 42026,
+  "seed_derivation": "upi-gc-seed-v1",
+  "profiles": {
+    "pilot": {"components": 24, "candidate_cap": 24, "split_counts": [14, 5, 5], "attack_start": [4, 8], "attack_length": 6},
+    "baseline": {"components": 1000, "candidate_cap": 96, "split_counts": [600, 200, 200], "attack_start": [4, 12], "attack_length": 24}
+  },
+  "entities": {
+    "accounts": [8, 16], "vpas_per_account": [1, 2],
+    "initial_balance": {"median": 75000, "sigma": 0.75, "minimum": 1000, "maximum": 1000000}
+  },
+  "behavior": {
+    "episode_seconds": 14400,
+    "mixed_component_probability": 0.2,
+    "merchant_probability": 0.2,
+    "same_time_probability": 0.05,
+    "benign_high_value_probability": 0.1,
+    "benign_short_delay_probability": 0.1,
+    "benign_source_reuse": 0.8,
+    "fraud_source_reuse": 0.9,
+    "benign_payee_reuse": 0.8,
+    "amount_minimum_rupees": 10,
+    "amount_maximum_rupees": 50000,
+    "individual_amount": {"median": 350, "sigma": 1.1},
+    "merchant_amount": {"median": 1000, "sigma": 1.1},
+    "burst_amount": {"median": 15000, "sigma": 0.6, "minimum": 1000},
+    "drain_amount": {"median": 300, "sigma": 0.8},
+    "routine_delay": {"median": 480, "sigma": 0.9},
+    "drain_delay": {"median": 900, "sigma": 0.5},
+    "short_delay_mean": 15,
+    "hopping_delay": [15, 120],
+    "escalation_delay": [30, 180],
+    "delay_clip_seconds": [1, 7200],
+    "escalation_start": 200,
+    "escalation_multiplier": [1.15, 1.5],
+    "escalation_jitter_sigma": 0.1,
+    "families": ["high_value_burst", "slow_drain", "gradual_escalation", "beneficiary_hopping"],
+    "family_probabilities": [0.25, 0.25, 0.25, 0.25]
+  },
+  "splits": {
+    "train": ["2026-01-01T00:00:00Z", "2026-01-15T00:00:00Z"],
+    "validation": ["2026-01-16T00:00:00Z", "2026-01-22T00:00:00Z"],
+    "test": ["2026-01-23T00:00:00Z", "2026-01-29T00:00:00Z"]
+  },
+  "models": {
+    "xgboost": {
+      "n_estimators": 300, "max_depth": 4, "learning_rate": 0.05,
+      "min_child_weight": 1, "subsample": 1, "colsample_bytree": 1,
+      "reg_lambda": 1, "scale_pos_weight": 1, "objective": "binary:logistic",
+      "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 1
+    },
+    "random_forest": {
+      "n_estimators": 300, "max_depth": 12, "min_samples_leaf": 2,
+      "max_features": null, "bootstrap": true, "class_weight": null, "n_jobs": 1
+    }
+  },
+  "policy": {
+    "objective": "recall_under_benign_budgets_v1", "grid_step": 0.001,
+    "benign_block_budget": 0.01, "benign_review_budget": 0.05,
+    "minimum_benign_rows": 2000, "minimum_fraud_rows": 200,
+    "minimum_benign_components": 50, "minimum_fraud_components": 20
+  }
+}

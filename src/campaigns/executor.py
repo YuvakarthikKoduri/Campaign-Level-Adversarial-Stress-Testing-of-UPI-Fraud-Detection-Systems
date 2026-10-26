@@ -1,12 +1,26 @@
 """
 Campaign executor - runs the attacker-detector loop.
 """
-import time
+import random
+import math
+from dataclasses import dataclass
 from typing import Dict, List, Optional
 from datetime import datetime
 
 from src.campaigns.timing import CampaignTimer
 from src.campaigns.vpa_strategy import VPASelector, VPAStrategy
+from src.campaigns.generator import CampaignStatus
+from src.experiments.config import derive_seed
+from src.money import subtract_money, at_least
+
+
+@dataclass(frozen=True)
+class AttackerCampaignView:
+    """Own declared objective only; never internal outcomes or detector state."""
+    campaign_id: str
+    target_amount: float
+    family: object
+    fraud_type: str
 
 
 class CampaignExecutor:
@@ -26,7 +40,9 @@ class CampaignExecutor:
         detector,
         environment,
         attacker,
-        max_steps: int = 50
+        max_steps: int = 50,
+        feedback: str = "label_only",
+        max_transaction_amount: float = 50000,
     ):
         """
         Initialize campaign executor.
@@ -41,6 +57,9 @@ class CampaignExecutor:
         self.environment = environment
         self.attacker = attacker
         self.max_steps = max_steps
+        if max_steps <= 0 or feedback not in ("label_only", "score"):
+            raise ValueError("Invalid executor configuration")
+        self.feedback, self.max_transaction_amount = feedback, max_transaction_amount
 
     def execute_campaign(
         self,
@@ -61,12 +80,16 @@ class CampaignExecutor:
         Returns:
             Completed campaign
         """
+        seed = 42 if seed is None else seed
+        if hasattr(self.attacker, "random"):
+            self.attacker.random = random.Random(getattr(campaign, "policy_seed",
+                                                         derive_seed(seed, "policy")))
         # Initialize timer based on campaign family
         if campaign.family:
             timer = CampaignTimer(
                 family=campaign.family,
                 start_time=campaign.created_at,
-                seed=seed
+                seed=getattr(campaign, "timer_seed", derive_seed(seed, "timer"))
             )
             # Attach timer to attacker so it can generate timestamps
             self.attacker.timer = timer
@@ -79,7 +102,7 @@ class CampaignExecutor:
             vpa_selector = VPASelector(
                 strategy=campaign.vpa_strategy,
                 available_vpas=accounts,
-                seed=seed
+                seed=getattr(campaign, "vpa_seed", derive_seed(seed, "vpa"))
             )
             # Attach VPA selector to attacker
             self.attacker.vpa_selector = vpa_selector
@@ -88,6 +111,13 @@ class CampaignExecutor:
             self.attacker.vpa_selector = None
 
         step = 0
+        last_time = campaign.created_at
+        view = AttackerCampaignView(campaign.campaign_id, campaign.target_amount,
+                                    campaign.family, campaign.fraud_type)
+        if len(set(accounts)) < 2:
+            raise ValueError("At least two controlled VPAs required")
+        if hasattr(self.attacker, "begin_episode"):
+            self.attacker.begin_episode(view, self.max_steps)
 
         if verbose:
             print(f"\n{'='*60}")
@@ -102,28 +132,60 @@ class CampaignExecutor:
                 print(f"Source VPA: {vpa_selector.get_strategy_description()}")
             print(f"{'='*60}\n")
 
+        campaign.proposals = 0
         while step < self.max_steps and not campaign.is_complete():
             step += 1
 
             # Attacker chooses next transaction
             transaction = self.attacker.choose_action(
-                campaign,
+                view,
                 state={},  # Could include environment state
                 accounts=accounts
             )
 
             if transaction is None:
                 # Attacker decided to stop
-                campaign.status = campaign.status  # Keep current status
+                campaign.finalize(CampaignStatus.FAILED, "attacker_stopped", last_time)
                 break
+            campaign.proposals += 1
 
             # Ensure timestamp is present (attacker should provide it)
             if 'timestamp' not in transaction:
                 # Fallback: use current time if attacker didn't provide timestamp
-                transaction['timestamp'] = datetime.now().isoformat()
+                transaction['timestamp'] = last_time.isoformat()
+
+            try:
+                when = transaction["timestamp"]
+                if isinstance(when, str):
+                    when = datetime.fromisoformat(when)
+                amount = transaction["amount"]
+                if (not isinstance(when, datetime) or when.tzinfo is not None
+                        or when < last_time
+                        or transaction["from_vpa"] not in accounts
+                        or transaction["to_vpa"] not in accounts
+                        or transaction["from_vpa"] == transaction["to_vpa"]
+                        or not math.isfinite(amount) or amount <= 0
+                        or amount > self.max_transaction_amount):
+                    raise ValueError("Action violates declared threat model")
+                if not at_least(subtract_money(campaign.budget, campaign.total_amount_moved), amount):
+                    campaign.finalize(CampaignStatus.FAILED, "budget_exhausted", last_time)
+                    break
+                if (when - campaign.created_at).total_seconds() > campaign.max_duration_seconds:
+                    campaign.finalize(CampaignStatus.TIMED_OUT, "time_horizon", last_time)
+                    break
+            except (KeyError, ValueError, TypeError) as exc:
+                campaign.finalize(CampaignStatus.INVALID, "invalid_action", last_time)
+                campaign.invalid_action = {"step": step, "reason": str(exc)}
+                break
+            transaction["timestamp"] = when.isoformat()
+            transaction["transaction_id"] = f"{campaign.campaign_id}-step-{step:04d}"
 
             # Environment evaluates and decides (uses its internal detector)
             response = self.environment.process_transaction(transaction)
+            if response["execution_status"] == "invalid":
+                campaign.finalize(CampaignStatus.INVALID, "infeasible_execution", when)
+                campaign.invalid_action = {"step": step, "reason": response.get("details")}
+                break
 
             # Add response details to transaction
             transaction.update(response)
@@ -132,13 +194,23 @@ class CampaignExecutor:
             campaign.add_transaction(transaction)
 
             # Attacker observes response and adapts
-            self.attacker.observe(response)
+            public_keys = ("from_vpa", "to_vpa", "amount", "timestamp", "decision",
+                           "amount_transferred", "execution_status", "status")
+            feedback = {key: response[key] for key in public_keys}
+            if self.feedback == "score":
+                feedback["risk_score"] = response["risk_score"]
+            self.attacker.observe(feedback)
+            if hasattr(self.attacker, "last_transition"):
+                transaction["rl_transition"] = self.attacker.last_transition
+            last_time = when
 
             if verbose:
                 self._print_step(step, transaction, response)
 
-            # Small delay for realistic timing
-            time.sleep(0.01)
+        if not campaign.is_complete():
+            campaign.finalize(CampaignStatus.TIMED_OUT, "step_horizon", last_time)
+        if hasattr(self.attacker, "end_episode"):
+            self.attacker.end_episode(campaign.status.value)
 
         if verbose:
             self._print_summary(campaign)
@@ -155,7 +227,7 @@ class CampaignExecutor:
 
         if hasattr(self.attacker, 'get_adaptation_summary'):
             summary = self.attacker.get_adaptation_summary()
-            print(f"  Attacker multiplier: {summary['amount_multiplier']:.2f}x")
+            print(f"  Attacker state: {summary}")
 
         print()
 

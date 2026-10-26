@@ -1,0 +1,11 @@
+PROJECT LICENSE DECISION PENDING
+
+This integration does not select or grant a new project-wide license on
+behalf of the existing copyright holders. Repository access is not a claim
+that all project material has an open-source redistribution license.
+
+The repository owner and relevant contributors must approve a suitable
+project license before unqualified reuse/distribution licensing claims.
+Existing third-party material retains its original notices and terms:
+see dashboard/THIRD_PARTY_NOTICES.md, vendored asset licenses, and the
+license notice in research/paper/IEEEtran.cls.

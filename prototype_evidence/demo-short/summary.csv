@@ -1,0 +1,17 @@
+detector,kind,attacker,campaigns,seeds,success_mean,success_seed_sd,proposals_mean,proposals_seed_sd,rejected_before_execution_mean,rejected_before_execution_seed_sd,attempted_mean,attempted_seed_sd,allowed_mean,allowed_seed_sd,flagged_mean,flagged_seed_sd,blocked_mean,blocked_seed_sd,exposure_mean,exposure_seed_sd,detection_seconds_observed,detection_seconds_mean_observed,intervention_seconds_observed,intervention_seconds_mean_observed
+xgboost,known,static,6,1,1,,1.5,,0,,1.5,,0.5,,1,,0,,37362.191666666666,,6,0.0,0,
+xgboost,known,adaptive,6,1,1,,1.5,,0,,1.5,,0.5,,1,,0,,36538.175,,6,0.0,0,
+xgboost,known,rl,6,1,1,,3,,0,,3,,1,,2,,0,,27398.605,,6,0.0,0,
+xgboost,known,untrained_rl,6,1,0.6666666666666666,,4.666666666666667,,0,,4.666666666666667,,2.5,,1.8333333333333333,,0.3333333333333333,,23412.795,,5,360.0,2,1980.0
+xgboost,unknown,static,6,1,0.8333333333333334,,6.833333333333333,,0,,6.833333333333333,,5.833333333333333,,0.8333333333333334,,0.16666666666666666,,16342.02,,4,3891.7791025,1,6263.968973
+xgboost,unknown,adaptive,6,1,1,,6.833333333333333,,0,,6.833333333333333,,5.333333333333333,,1.5,,0,,17481.9,,5,4269.230995,0,
+xgboost,unknown,rl,6,1,1,,1.6666666666666667,,0,,1.6666666666666667,,0.6666666666666666,,1,,0,,15782.166666666668,,6,0.0,0,
+xgboost,unknown,untrained_rl,6,1,1,,2.8333333333333335,,0,,2.8333333333333335,,1.8333333333333333,,1,,0,,15782.166666666668,,6,540.0,0,
+random_forest,known,static,6,1,1,,1.5,,0,,1.5,,1.5,,0,,0,,37362.191666666666,,0,,0,
+random_forest,known,adaptive,6,1,1,,1.5,,0,,1.5,,1.5,,0,,0,,38576.09166666667,,0,,0,
+random_forest,known,rl,6,1,1,,2.1666666666666665,,0,,2.1666666666666665,,2,,0.16666666666666666,,0,,27398.605,,1,1800.0,0,
+random_forest,known,untrained_rl,6,1,0.6666666666666666,,4.666666666666667,,0,,4.666666666666667,,2.8333333333333335,,1.5,,0.3333333333333333,,23412.795,,5,504.0,2,1980.0
+random_forest,unknown,static,6,1,1,,7,,0,,7,,6,,1,,0,,17920.005,,2,3563.889781,0,
+random_forest,unknown,adaptive,6,1,1,,7.166666666666667,,0,,7.166666666666667,,5.833333333333333,,1.3333333333333333,,0,,17758.545000000002,,4,4114.4923115,0,
+random_forest,unknown,rl,6,1,1,,1.6666666666666667,,0,,1.6666666666666667,,1.6666666666666667,,0,,0,,15782.166666666668,,0,,0,
+random_forest,unknown,untrained_rl,6,1,1,,2.8333333333333335,,0,,2.8333333333333335,,2.8333333333333335,,0,,0,,15782.166666666668,,0,,0,

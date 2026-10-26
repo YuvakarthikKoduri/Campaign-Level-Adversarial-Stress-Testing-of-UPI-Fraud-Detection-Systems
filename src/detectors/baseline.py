@@ -11,7 +11,6 @@ from typing import Dict, Union, Optional
 from pathlib import Path
 import warnings
 
-warnings.filterwarnings('ignore')
 
 
 class BaselineDetector:
@@ -49,8 +48,15 @@ class BaselineDetector:
             model_data = pickle.load(f)
 
         self.model = model_data['model']
+        # Stable tree-probability reduction order; in-memory inference only.
+        # Never save or rewrite the original serialized artifact.
+        self.model.set_params(n_jobs=1)
         self.feature_names = model_data['feature_names']
         self.scaler = model_data.get('scaler', None)
+        threshold = model_data.get('threshold')
+        self.artifact_threshold = float(threshold) if threshold is not None else None
+        if self.feature_names != ["amount", "hour_of_day", "velocity_1h", "is_new_vpa"]:
+            raise ValueError("Unsupported detector feature schema")
 
         print(f"Model loaded from {model_path}")
         print(f"Features: {len(self.feature_names)}")
@@ -91,6 +97,16 @@ class BaselineDetector:
         # Convert dict to DataFrame if needed
         if isinstance(transaction, dict):
             transaction = pd.DataFrame([transaction])
+        if set(transaction.columns) != set(self.feature_names):
+            raise ValueError(f"Feature schema mismatch: expected {self.feature_names}")
+        values = transaction[self.feature_names]
+        if not np.isfinite(values.to_numpy(dtype=float)).all():
+            raise ValueError("Features must be finite numbers")
+        if ((values["amount"] <= 0).any()
+                or (~values["hour_of_day"].between(0, 23)).any()
+                or (values["velocity_1h"] < 0).any()
+                or (~values["is_new_vpa"].isin([0, 1])).any()):
+            raise ValueError("Features outside valid domain")
 
         # Ensure all required features are present
         missing_features = set(self.feature_names) - set(transaction.columns)
@@ -98,7 +114,7 @@ class BaselineDetector:
             raise ValueError(f"Missing features: {missing_features}")
 
         # Select and order features
-        X = transaction[self.feature_names].values
+        X = transaction[self.feature_names]
 
         # Apply scaling if scaler is available
         if self.scaler is not None:

@@ -67,3 +67,23 @@ Thumbs.db
 .env
 .env.local
 .claude/
+
+# Academic prototype development-only verification copies and environments
+prototype_evidence/package-check/
+.venv-prototype/
+.venv-m1/
+.pytest_cache/
+
+# Local restored evidence, jobs and generated test outputs are never committed.
+.local/
+reviewer-main/
+reviewer-repeat/
+reviewer-reload/
+research/paper/*.aux
+research/paper/*.bbl
+research/paper/*.blg
+research/paper/*.log
+research/paper/*.out
+research/paper/*.synctex.gz
+.local/
+*.xdv

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="450">
+<rect width="1000" height="450" fill="white"/>
+<g font-family="sans-serif" fill="#172033">
+<text x="40" y="35" font-size="23">RL training reward</text>
+<text x="40" y="60" font-size="13">Non-overlapping 25-episode means pooled across training seeds; reward is not detector quality.</text>
+<path d="M75 365 H930" stroke="#e2e8f0"/>
+<text x="20" y="370" font-size="12">-1.20</text>
+<path d="M75 300 H930" stroke="#e2e8f0"/>
+<text x="20" y="305" font-size="12">0.33</text>
+<path d="M75 235 H930" stroke="#e2e8f0"/>
+<text x="20" y="240" font-size="12">1.86</text>
+<path d="M75 170 H930" stroke="#e2e8f0"/>
+<text x="20" y="175" font-size="12">3.39</text>
+<path d="M75 105 H930" stroke="#e2e8f0"/>
+<text x="20" y="110" font-size="12">4.92</text>
+<polyline points="146.25,180.59 217.50,166.91 288.75,154.49 360.00,141.95 431.25,142.54 502.50,130.63 573.75,136.74 645.00,118.07 716.25,110.86 787.50,113.50 858.75,112.78 930.00,105.00" fill="none" stroke="#2563eb" stroke-width="3"/>
+<text x="100" y="420" fill="#2563eb" font-size="14">random_forest</text>
+<polyline points="146.25,195.32 217.50,180.21 288.75,171.90 360.00,162.10 431.25,141.68 502.50,141.15 573.75,139.96 645.00,140.72 716.25,122.96 787.50,120.03 858.75,122.84 930.00,113.87" fill="none" stroke="#d97706" stroke-width="3"/>
+<text x="400" y="420" fill="#d97706" font-size="14">xgboost</text>
+<text x="75" y="390" font-size="12">0</text>
+<text x="820" y="390" font-size="12">300 episodes</text>
+</g></svg>

@@ -1,296 +1,100 @@
-"""
-Experiment scenarios S1-S4.
-"""
-from typing import List, Dict
+"""S1-S4 orchestration over paired immutable workloads, retaining the scenario API."""
 import json
+from dataclasses import replace
+from datetime import datetime
 from pathlib import Path
 
-from src.campaigns.generator import CampaignGenerator
+from src.attackers.family_based import make_attacker
 from src.campaigns.executor import CampaignExecutor
-from src.attackers.static import StaticAttacker
-from src.attackers.adaptive import AdaptiveAttacker
+from src.campaigns.generator import Campaign, CampaignFamily
+from src.campaigns.vpa_strategy import VPAStrategy
+from src.environment import UPIEnvironment
 from src.evaluation.metrics import CampaignMetrics
+from src.experiments.config import RunConfig, build_workload
 
 
 class ExperimentScenarios:
-    """
-    Four experimental scenarios:
+    def __init__(self, detector, environment, config=None, workload=None):
+        self.detector, self.environment = detector, environment
+        self.config = config
+        self.workload = workload
+        self.records = {}
 
-    S1: Known Fraud + Static Attacker
-    S2: Known Fraud + Adaptive Attacker
-    S3: Unknown Fraud + Static Attacker
-    S4: Unknown Fraud + Adaptive Attacker (PRIMARY STRESS TEST)
-    """
+    def _run(self, scenario, num_campaigns=100, verbose=False, seed=42):
+        config = self.config or RunConfig(
+            seed=seed, campaigns=num_campaigns,
+            flag_threshold=self.environment.threshold_config.flag_threshold,
+            block_threshold=self.environment.threshold_config.block_threshold)
+        if config.seed != seed or config.campaigns != num_campaigns:
+            raise ValueError("Scenario arguments do not match immutable RunConfig")
+        if (config.flag_threshold != self.environment.threshold_config.flag_threshold
+                or config.block_threshold != self.environment.threshold_config.block_threshold):
+            raise ValueError("Environment policy does not match RunConfig")
+        workload = self.workload or build_workload(config)
+        kind = "known" if scenario in ("S1", "S2") else "unknown"
+        adaptive = scenario in ("S2", "S4")
+        campaigns, records = [], []
+        for spec in workload[kind]:
+            family = CampaignFamily(spec.family)
+            campaign = Campaign(spec.campaign_id, "controlled-attacker", "simulated transfer",
+                                spec.target_amount, spec.fraud_type, family,
+                                VPAStrategy(spec.vpa_strategy))
+            campaign.created_at = datetime.fromisoformat(spec.start_time)
+            campaign.policy_seed, campaign.timer_seed, campaign.vpa_seed = (
+                spec.policy_seed, spec.timer_seed, spec.vpa_seed)
+            campaign.budget = config.budget
+            campaign.max_duration_seconds = config.max_duration_seconds
+            campaign.is_fraud = spec.is_fraud
+            # Preserve the supplied environment policy; no shared ledger state.
+            from copy import deepcopy
+            env = UPIEnvironment(threshold_config=deepcopy(self.environment.threshold_config),
+                                 fraud_detector=self.detector)
+            for vpa in config.accounts:
+                env.create_account(vpa, config.initial_balance)
+                env.create_vpa(vpa, vpa, vpa)
+            actor = make_attacker(family, adaptive=adaptive, seed=spec.policy_seed)
+            executor = CampaignExecutor(self.detector, env, actor, config.max_steps,
+                                        config.feedback, config.max_transaction_amount)
+            executor.execute_campaign(campaign, list(config.accounts), verbose, seed=seed)
+            if campaign.status.value == "INVALID":
+                raise RuntimeError(f"Invalid campaign {spec.campaign_id}: {campaign.invalid_action}")
+            initial_total = config.initial_balance * len(config.accounts)
+            if abs(sum(a.balance for a in env.accounts.values()) - initial_total) > 1e-6:
+                raise RuntimeError("Ledger conservation failed")
+            records.append({
+                "spec": spec.to_dict(), "adaptive": adaptive,
+                "outcome": campaign.to_dict(), "transactions": campaign.transactions,
+                "feedback": actor.history,
+                "attacker_state": actor.get_adaptation_summary(),
+                "final_balances": {a: env.accounts[a].balance for a in config.accounts},
+                "effective_policy": env.threshold_config.to_dict(),
+            })
+            campaigns.append(campaign)
+        self.records[scenario] = records
+        return CampaignMetrics.generate_summary(campaigns, scenario)
 
-    def __init__(self, detector, environment):
-        """
-        Initialize experiment scenarios.
+    def run_scenario_s1(self, num_campaigns=100, verbose=False, seed=42):
+        return self._run("S1", num_campaigns, verbose, seed)
 
-        Args:
-            detector: Trained fraud detector
-            environment: UPI environment simulator (used as template)
-        """
-        self.detector = detector
-        self.environment = environment  # Used as template for creating fresh environments
-        self.campaign_generator = CampaignGenerator()
+    def run_scenario_s2(self, num_campaigns=100, verbose=False, seed=42):
+        return self._run("S2", num_campaigns, verbose, seed)
 
-    def _create_fresh_environment(self):
-        """
-        Create a fresh UPI environment for campaign isolation.
+    def run_scenario_s3(self, num_campaigns=100, verbose=False, seed=42):
+        return self._run("S3", num_campaigns, verbose, seed)
 
-        This prevents velocity accumulation artifacts by ensuring each
-        campaign is evaluated independently without transaction history
-        from previous campaigns.
+    def run_scenario_s4(self, num_campaigns=100, verbose=False, seed=42):
+        return self._run("S4", num_campaigns, verbose, seed)
 
-        Returns:
-            Fresh UPIEnvironment instance with same detector and config
-        """
-        from src.environment import UPIEnvironment
-        return UPIEnvironment(
-            threshold_config=self.environment.threshold_config,
-            fraud_detector=self.detector
-        )
-
-    def run_scenario_s1(
-        self,
-        num_campaigns: int = 100,
-        accounts: List[str] = None,
-        verbose: bool = False,
-        seed: int = 42
-    ) -> Dict:
-        """
-        S1: Known Fraud + Static Attacker
-
-        Baseline scenario - detector should perform well.
-        """
-        if accounts is None:
-            accounts = self._generate_test_accounts()
-
-        campaigns = []
-
-        for i in range(num_campaigns):
-            # Create FRESH environment for each campaign to avoid velocity accumulation
-            fresh_environment = self._create_fresh_environment()
-
-            campaign = self.campaign_generator.create_known_fraud_campaign()
-            attacker = StaticAttacker(fraud_type="known")
-            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
-
-            completed_campaign = executor.execute_campaign(
-                campaign,
-                accounts,
-                verbose=verbose and i == 0,  # Verbose only for first
-                seed=seed + i  # Unique seed per campaign for reproducible timing
-            )
-            campaigns.append(completed_campaign)
-
-        results = CampaignMetrics.generate_summary(campaigns, "S1: Known + Static")
-        return results
-
-    def run_scenario_s2(
-        self,
-        num_campaigns: int = 100,
-        accounts: List[str] = None,
-        verbose: bool = False,
-        seed: int = 42
-    ) -> Dict:
-        """
-        S2: Known Fraud + Adaptive Attacker
-
-        Tests adaptive behavior on known fraud patterns.
-        """
-        if accounts is None:
-            accounts = self._generate_test_accounts()
-
-        campaigns = []
-
-        for i in range(num_campaigns):
-            # Create FRESH environment for each campaign to avoid velocity accumulation
-            fresh_environment = self._create_fresh_environment()
-
-            campaign = self.campaign_generator.create_known_fraud_campaign()
-            attacker = AdaptiveAttacker(fraud_type="known")
-            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
-
-            completed_campaign = executor.execute_campaign(
-                campaign,
-                accounts,
-                verbose=verbose and i == 0,
-                seed=seed + i  # Unique seed per campaign
-            )
-            campaigns.append(completed_campaign)
-
-        results = CampaignMetrics.generate_summary(campaigns, "S2: Known + Adaptive")
-        return results
-
-    def run_scenario_s3(
-        self,
-        num_campaigns: int = 100,
-        accounts: List[str] = None,
-        verbose: bool = False,
-        seed: int = 42
-    ) -> Dict:
-        """
-        S3: Unknown Fraud + Static Attacker
-
-        Tests detector on unseen fraud patterns.
-        """
-        if accounts is None:
-            accounts = self._generate_test_accounts()
-
-        campaigns = []
-
-        for i in range(num_campaigns):
-            # Create FRESH environment for each campaign to avoid velocity accumulation
-            fresh_environment = self._create_fresh_environment()
-
-            campaign = self.campaign_generator.create_unknown_fraud_campaign()
-            attacker = StaticAttacker(fraud_type="unknown")
-            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
-
-            completed_campaign = executor.execute_campaign(
-                campaign,
-                accounts,
-                verbose=verbose and i == 0,
-                seed=seed + i  # Unique seed per campaign
-            )
-            campaigns.append(completed_campaign)
-
-        results = CampaignMetrics.generate_summary(campaigns, "S3: Unknown + Static")
-        return results
-
-    def run_scenario_s4(
-        self,
-        num_campaigns: int = 100,
-        accounts: List[str] = None,
-        verbose: bool = False,
-        seed: int = 42
-    ) -> Dict:
-        """
-        S4: Unknown Fraud + Adaptive Attacker
-
-        PRIMARY STRESS TEST: Unknown patterns + adaptive behavior.
-        This is the main research contribution.
-        """
-        if accounts is None:
-            accounts = self._generate_test_accounts()
-
-        campaigns = []
-
-        for i in range(num_campaigns):
-            # Create FRESH environment for each campaign to avoid velocity accumulation
-            fresh_environment = self._create_fresh_environment()
-
-            campaign = self.campaign_generator.create_unknown_fraud_campaign()
-            attacker = AdaptiveAttacker(fraud_type="unknown")
-            executor = CampaignExecutor(self.detector, fresh_environment, attacker)
-
-            completed_campaign = executor.execute_campaign(
-                campaign,
-                accounts,
-                verbose=verbose and i == 0,
-                seed=seed + i  # Unique seed per campaign
-            )
-            campaigns.append(completed_campaign)
-
-        results = CampaignMetrics.generate_summary(campaigns, "S4: Unknown + Adaptive")
-        return results
-
-    def run_all_scenarios(
-        self,
-        num_campaigns: int = 100,
-        save_results: bool = True,
-        detector_name: str = "XGBoost",
-        seed: int = 42
-    ) -> Dict[str, Dict]:
-        """
-        Run all four scenarios and compare results.
-
-        Args:
-            num_campaigns: Number of campaigns per scenario
-            save_results: Save results to JSON files
-            detector_name: Name of detector for result naming
-            seed: Random seed for reproducibility
-
-        Returns:
-            Dictionary with results for all scenarios
-        """
-        print("Running all scenarios...")
-        print(f"Campaigns per scenario: {num_campaigns}\n")
-
-        accounts = self._generate_test_accounts()
-
-        results = {}
-
-        print("Running S1: Known + Static...")
-        results['S1'] = self.run_scenario_s1(num_campaigns, accounts, seed=seed)
-
-        print("Running S2: Known + Adaptive...")
-        results['S2'] = self.run_scenario_s2(num_campaigns, accounts, seed=seed)
-
-        print("Running S3: Unknown + Static...")
-        results['S3'] = self.run_scenario_s3(num_campaigns, accounts, seed=seed)
-
-        print("Running S4: Unknown + Adaptive (PRIMARY STRESS TEST)...")
-        results['S4'] = self.run_scenario_s4(num_campaigns, accounts, seed=seed)
-
+    def run_all_scenarios(self, num_campaigns=100, save_results=True,
+                          detector_name="XGBoost", seed=42, output_dir=None):
+        results = {name: self._run(name, num_campaigns, seed=seed)
+                   for name in ("S1", "S2", "S3", "S4")}
         if save_results:
-            self._save_results(results, detector_name=detector_name)
-
-        self._print_comparison(results)
-
+            # The CLI owns manifests; direct API calls must declare a fresh folder.
+            if output_dir is None:
+                raise ValueError("Explicit fresh output_dir required; fixed paths are disabled")
+            root = Path(output_dir)
+            root.mkdir(parents=True, exist_ok=False)
+            (root / "summary.json").write_text(json.dumps(results, indent=2, allow_nan=False))
+            (root / "campaigns.json").write_text(json.dumps(self.records, indent=2, allow_nan=False))
         return results
-
-    def _generate_test_accounts(self, num_accounts: int = 20) -> List[str]:
-        """Generate test VPA addresses."""
-        return [f"user{i}@upi" for i in range(num_accounts)]
-
-    def _save_results(self, results: Dict[str, Dict], detector_name: str = "XGBoost"):
-        """Save results to JSON files."""
-        results_dir = Path("results/metrics")
-        results_dir.mkdir(parents=True, exist_ok=True)
-
-        # Create detector-specific subdirectory
-        detector_slug = detector_name.lower().replace(' ', '_')
-        detector_dir = results_dir / detector_slug
-        detector_dir.mkdir(parents=True, exist_ok=True)
-
-        for scenario, data in results.items():
-            # Save in detector-specific directory
-            filepath = detector_dir / f"{scenario}_results.json"
-            with open(filepath, 'w') as f:
-                json.dump(data, f, indent=2)
-            print(f"Saved {scenario} results to {filepath}")
-
-            # Also save in main directory for backward compatibility
-            main_filepath = results_dir / f"{scenario}_results.json"
-            with open(main_filepath, 'w') as f:
-                json.dump(data, f, indent=2)
-
-    def _print_comparison(self, results: Dict[str, Dict]):
-        """Print comparison table."""
-        print("\n" + "="*80)
-        print("SCENARIO COMPARISON")
-        print("="*80)
-
-        headers = ["Metric", "S1", "S2", "S3", "S4"]
-
-        metrics = [
-            ("Campaign Success Rate", "campaign_success_rate", "{:.1%}"),
-            ("Avg Detection Time (s)", "avg_detection_time_sec", "{:.2f}"),
-            ("Avg Intervention Time (s)", "avg_intervention_time_sec", "{:.2f}"),
-            ("Avg Financial Exposure", "avg_financial_exposure", "₹{:,.0f}"),
-            ("Total Exposure", "total_financial_exposure", "₹{:,.0f}"),
-        ]
-
-        # Print header
-        print(f"\n{headers[0]:<30} {headers[1]:<12} {headers[2]:<12} {headers[3]:<12} {headers[4]:<12}")
-        print("-" * 80)
-
-        # Print metrics
-        for metric_name, key, fmt in metrics:
-            values = [results[s].get(key, 0) for s in ['S1', 'S2', 'S3', 'S4']]
-            formatted = [fmt.format(v) for v in values]
-            print(f"{metric_name:<30} {formatted[0]:<12} {formatted[1]:<12} {formatted[2]:<12} {formatted[3]:<12}")
-
-        print("="*80 + "\n")

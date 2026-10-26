@@ -1,0 +1,5 @@
+{
+  "cancelled": true,
+  "name": "review-ui-cancel-02",
+  "note": "Real pilot job cancelled through UI; partial records preserved. First shorter UI job completed before cancellation attempt."
+}
