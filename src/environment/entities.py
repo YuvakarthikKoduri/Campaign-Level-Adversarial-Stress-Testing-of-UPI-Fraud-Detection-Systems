@@ -12,6 +12,7 @@ from typing import List, Dict, Optional
 from datetime import datetime
 import uuid
 import math
+from src.money import add_money, subtract_money, at_least
 
 
 @dataclass
@@ -47,8 +48,8 @@ class Account:
         if not self.is_active:
             return False
 
-        if self.balance >= amount:
-            self.balance -= amount
+        if at_least(self.balance, amount):
+            self.balance = subtract_money(self.balance, amount)
             self.transaction_history.append(transaction_id)
             return True
         return False
@@ -70,7 +71,7 @@ class Account:
         if not self.is_active:
             return False
 
-        self.balance += amount
+        self.balance = add_money(self.balance, amount)
         self.transaction_history.append(transaction_id)
         return True
 

@@ -14,6 +14,7 @@ import logging
 
 from .entities import Account, VPA, Transaction
 from .thresholds import ThresholdConfig, RiskDecision, get_default_thresholds
+from src.money import at_least
 
 
 logger = logging.getLogger(__name__)
@@ -258,7 +259,7 @@ class UPIEnvironment:
         eligible = (sender.is_active and receiver.is_active
                     and self.vpas[transaction.from_vpa].is_active
                     and self.vpas[transaction.to_vpa].is_active
-                    and sender.balance >= transaction.amount)
+                    and at_least(sender.balance, transaction.amount))
         transferred = 0.0
         if not eligible:
             status, execution, details = "failed", "invalid", "Inactive or insufficient funds"

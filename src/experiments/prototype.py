@@ -1,6 +1,7 @@
 """Independent academic experiment API. Does not use semantic_pipeline."""
 import csv
 from dataclasses import asdict, dataclass
+import copy
 import hashlib
 import importlib.metadata
 import json
@@ -19,6 +20,22 @@ from src.environment.thresholds import ThresholdConfig
 from src.experiments.config import RunConfig, build_workload, derive_seed
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def validate_lineage(metadata, detector, seed, model_digest, options):
+    """Check declared checkpoint lineage, not independent training provenance."""
+    expected = dict(model_sha256=model_digest, detector=detector,
+                    evaluation_seed=seed, training_seed=derive_seed(seed, "prototype-training"),
+                    training_families=["high_value_burst"], max_steps=options.max_steps,
+                    flag_threshold=options.flag_threshold, block_threshold=options.block_threshold)
+    if not isinstance(metadata, dict) or set(metadata) != set(expected) | {"training_episodes"}:
+        raise ValueError("Checkpoint metadata schema mismatch: missing or extra lineage fields")
+    for field, value in expected.items():
+        candidate = metadata[field]
+        if type(candidate) is not type(value) or candidate != value:
+            raise ValueError(f"Checkpoint {field} mismatch: incompatible lineage or execution profile")
+    if type(metadata["training_episodes"]) is not int or metadata["training_episodes"] <= 0:
+        raise ValueError("Checkpoint training_episodes must be a positive integer")
 
 
 @dataclass(frozen=True)
@@ -45,11 +62,15 @@ class PrototypeConfig:
 
 
 def episode(detector, actor, spec, config):
+    if config.feedback != "label_only":
+        raise ValueError("Prototype episode supports label_only feedback only")
     campaign = Campaign(spec.campaign_id, "prototype-controlled", "synthetic gross transfer",
                         spec.target_amount, spec.fraud_type, CampaignFamily(spec.family),
                         VPAStrategy(spec.vpa_strategy))
     from datetime import datetime
     campaign.created_at = datetime.fromisoformat(spec.start_time)
+    campaign.budget = config.budget
+    campaign.max_duration_seconds = config.max_duration_seconds
     campaign.policy_seed, campaign.timer_seed, campaign.vpa_seed = (
         spec.policy_seed, spec.timer_seed, spec.vpa_seed)
     env = UPIEnvironment(ThresholdConfig(config.flag_threshold, config.block_threshold), detector)
@@ -119,12 +140,7 @@ def compare(output, options, policy_dir=None):
             model_digest = hashlib.sha256(model.read_bytes()).hexdigest()
             if policy_dir is not None:
                 actor = QLearningAttacker.load(Path(policy_dir) / f"q_{name}_{seed}.json")
-                if (actor.metadata.get("model_sha256") != model_digest
-                        or actor.metadata.get("evaluation_seed") != seed
-                        or actor.metadata.get("max_steps") != options.max_steps
-                        or actor.metadata.get("flag_threshold") != options.flag_threshold
-                        or actor.metadata.get("block_threshold") != options.block_threshold):
-                    raise ValueError("Checkpoint detector/seed/policy/horizon mismatch")
+                validate_lineage(actor.metadata, name, seed, model_digest, options)
             elif "rl" in policies:
                 train_config = RunConfig(seed=train_seed, campaigns=options.episodes,
                                          max_steps=options.max_steps,
@@ -137,13 +153,14 @@ def compare(output, options, policy_dir=None):
                     learning.append(dict(detector=name, seed=seed, episode=number + 1,
                                          epsilon=actor.epsilon, updates=actor.updates,
                                          **metrics(c, actor)))
-                actor.save(output / f"q_{name}_{seed}.json", metadata=dict(
+                actor.metadata = dict(
                     model_sha256=model_digest, detector=name, evaluation_seed=seed,
                     training_seed=train_seed, training_families=["high_value_burst"],
                     max_steps=options.max_steps, flag_threshold=options.flag_threshold,
-                    block_threshold=options.block_threshold, training_episodes=options.episodes))
+                    block_threshold=options.block_threshold, training_episodes=options.episodes)
+                actor.save(output / f"q_{name}_{seed}.json")
             actor.training, actor.epsilon = False, 0.
-            learned_snapshot = {key: list(values) for key, values in actor.q.items()}
+            learned_snapshot = copy.deepcopy(actor.policy_payload())
             training_updates = actor.updates
             workload = build_workload(config)
             for kind, specs in workload.items():
@@ -162,11 +179,17 @@ def compare(output, options, policy_dir=None):
                                             campaign_id=spec.campaign_id, spec=spec.to_dict(),
                                             metrics=metrics(c, current), outcome=c.to_dict(),
                                             transactions=c.transactions))
-            if (actor.updates != training_updates or
-                    any(actor.q[key] != values for key, values in learned_snapshot.items())):
-                raise RuntimeError("Frozen evaluation changed learned values")
-            manifests.append(dict(detector=name, seed=seed, train_seed=train_seed,
-                                  training_families=["high_value_burst"],
+            if actor.training or actor.policy_payload() != learned_snapshot:
+                raise RuntimeError("Frozen evaluation changed complete policy representation")
+            policy_path = ((Path(policy_dir) if policy_dir is not None else output)
+                           / f"q_{name}_{seed}.json")
+            lineage = copy.deepcopy(actor.metadata) if "rl" in policies else None
+            manifests.append(dict(detector=name, seed=seed,
+                                  train_seed=lineage["training_seed"] if lineage else None,
+                                  training_families=lineage["training_families"] if lineage else [],
+                                  verified_provenance=lineage,
+                                  policy_sha256=hashlib.sha256(policy_path.read_bytes()).hexdigest()
+                                  if lineage else None,
                                   evaluation_updates=actor.updates - training_updates,
                                   training_updates=actor.updates,
                                   policy_source="checkpoint" if policy_dir is not None else "this_run",

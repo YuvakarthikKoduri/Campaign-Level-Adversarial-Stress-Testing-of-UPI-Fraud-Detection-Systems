@@ -1,0 +1,19 @@
+{
+  "artifact": "verified-evidence-v1.zip",
+  "sha256": "fb50e89d46f82a729b218b4bc2776e210f1bc2d1a69b340b713bf729bf13e04b",
+  "size_bytes": 10523806,
+  "unique_objects": 249,
+  "restored_files": 715,
+  "format": "upi-evidence-cas-v1",
+  "runs": [
+    "pilot-main",
+    "pilot-repeat",
+    "pilot-reload",
+    "legacy-short",
+    "legacy-repeat",
+    "legacy-reload",
+    "legacy-full",
+    "legacy-full-repeat",
+    "legacy-full-reload"
+  ]
+}

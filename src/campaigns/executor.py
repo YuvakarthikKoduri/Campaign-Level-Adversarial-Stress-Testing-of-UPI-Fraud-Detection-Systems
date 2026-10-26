@@ -11,6 +11,7 @@ from src.campaigns.timing import CampaignTimer
 from src.campaigns.vpa_strategy import VPASelector, VPAStrategy
 from src.campaigns.generator import CampaignStatus
 from src.experiments.config import derive_seed
+from src.money import subtract_money, at_least
 
 
 @dataclass(frozen=True)
@@ -166,7 +167,7 @@ class CampaignExecutor:
                         or not math.isfinite(amount) or amount <= 0
                         or amount > self.max_transaction_amount):
                     raise ValueError("Action violates declared threat model")
-                if amount > campaign.budget - campaign.total_amount_moved:
+                if not at_least(subtract_money(campaign.budget, campaign.total_amount_moved), amount):
                     campaign.finalize(CampaignStatus.FAILED, "budget_exhausted", last_time)
                     break
                 if (when - campaign.created_at).total_seconds() > campaign.max_duration_seconds:

@@ -10,6 +10,7 @@ from typing import List, Dict, Optional
 from enum import Enum
 
 from src.campaigns.vpa_strategy import VPAStrategy
+from src.money import add_money, at_least
 
 
 class CampaignStatus(Enum):
@@ -88,10 +89,10 @@ class Campaign:
         if not 0 <= moved <= amount:
             raise ValueError("Invalid transferred amount")
         self.transactions.append(transaction)
-        self.total_attempted_amount += amount
-        self.total_amount_moved += moved
+        self.total_attempted_amount = add_money(self.total_attempted_amount, amount)
+        self.total_amount_moved = add_money(self.total_amount_moved, moved)
         if decision == "BLOCK":
-            self.total_amount_blocked += amount
+            self.total_amount_blocked = add_money(self.total_amount_blocked, amount)
         if self.detection_time is None and decision in ("FLAG", "BLOCK"):
             self.detection_time = (when - self.created_at).total_seconds()
             self.exposure_before_detection = before
@@ -99,7 +100,7 @@ class Campaign:
             self.intervention_time = (when - self.created_at).total_seconds()
             self.exposure_before_intervention = before
             self.finalize(CampaignStatus.BLOCKED, "first_detector_block", when)
-        elif self.total_amount_moved >= self.target_amount:
+        elif at_least(self.total_amount_moved, self.target_amount):
             self.finalize(CampaignStatus.SUCCESS, "target_reached", when)
 
     def finalize(self, status, reason, when):
