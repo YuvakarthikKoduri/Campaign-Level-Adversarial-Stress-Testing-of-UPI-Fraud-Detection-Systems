@@ -2,10 +2,10 @@ const pptxgen=require("pptxgenjs");
 const path=require("path");
 async function main() {
   const p=new pptxgen();p.layout="LAYOUT_16x9";
-  p.author="AI-assisted draft for researcher review";
+  p.author="SHAURYA SINGH; K.H.A.Revanth; K Yuva Karthik; Likith R; Hima Tejaswi";
   p.subject="Faculty review of prototype/rl-academic-complete";
   p.title="UPI Fraud Stress Lab: Prototype Faculty Review";
-  p.company="Researcher authorship details pending approval";
+  p.company="Student project presentation; guide: Dr S. KALYANI; AI-assisted slide preparation";
   p.lang="en-IN";
   const theme={primary:"172D30",secondary:"465E62",accent:"01696F",light:"BCE2E7",bg:"FFFFFF"};
   const plan=[];

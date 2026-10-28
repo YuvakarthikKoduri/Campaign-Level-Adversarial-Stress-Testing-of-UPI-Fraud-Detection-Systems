@@ -2,7 +2,7 @@
 
 UPI Fraud Stress Lab is a Python research prototype for asking a practical question: **can a simulated attack campaign reach its transfer target before a fraud detector stops it?** It connects campaign generation, attacker decisions, a synthetic account ledger and two saved machine-learning detectors, then records the entire sequence for inspection.
 
-This page describes **`prototype/rl-academic-complete`**, whose research-code baseline is `92a12966ec49fd6dcd147fd4d7411382715bc729`. It is a historical command-line prototype, not the later corrected dashboard and mechanism-holdout pilot; the documentation update does not backport those fixes.
+This page describes **`prototype/rl-academic-complete`**, the selected final project branch for the faculty presentation, whose research-code baseline is `92a12966ec49fd6dcd147fd4d7411382715bc729`. It is a command-line prototype, not the separate corrected dashboard and mechanism-holdout pilot; final branch selection and documentation updates do not backport those fixes or certify scientific validity.
 
 > This is a synthetic research environment. Results do not establish real-world UPI fraud-detection effectiveness, actual victim losses or money saved. Gate C remains HOLD.
 
@@ -123,7 +123,7 @@ Completion means reaching the declared transfer target before termination. Evalu
 
 These are **historical observations from the older implementation, not final validated scientific estimates**. In particular, do not substitute the later corrected legacy count of 4,161 transactions or the later pilot's 7,200 campaigns into this branch's table.
 
-The later review branch contains decimal-money, evaluation-state and evidence-checking repairs, a separate matched pilot and its adverse benign-shift finding. Use that branch for the current academic package; do not interpret this README update as repairing this branch's research engine.
+The separate review branch contains decimal-money, evaluation-state and evidence-checking repairs, a matched pilot and its adverse benign-shift finding. Those are supplemental, version-specific materials, not the selected final branch for this presentation; do not interpret this README update as repairing this branch's research engine.
 
 ## Dashboard and current IEEE report
 

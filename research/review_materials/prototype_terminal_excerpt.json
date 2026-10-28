@@ -1,0 +1,30 @@
+{
+  "code_baseline": "92a12966ec49fd6dcd147fd4d7411382715bc729",
+  "evidence_status": "Previously executed short demonstration; no experiment rerun for this slide revision",
+  "recorded_exit_code": 0,
+  "source_stdout_file": "short-main.stdout",
+  "source_stdout_sha256": "6ad38f881e640a4fac5988763df00431d7af23b4165d8f961cea4d0d43cc1116",
+  "source_stderr_sha256": "d8f74686495ab28b8fb9d22107aaf1feb85f6c0899d2230ada115dddde345b75",
+  "command_template": "python -B -s run_prototype.py --detector both --attacker all --seeds 101 --episodes 2 --campaigns 1 --output NEW_DEMO_DIRECTORY",
+  "command_template_note": "Interpreter and output location normalized; exact original argv is preserved in the previously delivered command journal.",
+  "evaluation_campaigns": 16,
+  "training_episodes_total": 4,
+  "campaigns_per_displayed_cell": 1,
+  "selected_stdout_lines": [
+    "xgboost known static success=1.000 exposure=46791.56",
+    "xgboost known rl success=1.000 exposure=29789.42",
+    "random_forest known rl success=1.000 exposure=29789.42"
+  ],
+  "source_output_hashes": {
+    "campaigns.json": "a7db7318776a99a8e4e4f50788ae7fb79d343e10cd7fafb798fbde970aa77b87",
+    "transactions.csv": "46775070e79a616d4ec3c7d76d153e641c06ec294c407162b6c848efeedd9718",
+    "summary.csv": "8f72126eafa9368a060bc8da85f02829a7493f91649d331bd2a1e6a124e77d0e",
+    "config.json": "0609afc062632c1c6def13aca71be2a371eadf0c70554b6e36360ad9e93d233f"
+  },
+  "repository_record_url": "https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems/blob/prototype/rl-academic-complete/research/review_materials/prototype_terminal_excerpt.json",
+  "definitions": {
+    "success": "Target-reaching fraction; each displayed cell contains one campaign.",
+    "exposure": "Mean gross simulated source debit in INR; not victim loss or savings.",
+    "known": "Attacker-training workload label, not verified detector-training ancestry."
+  }
+}
