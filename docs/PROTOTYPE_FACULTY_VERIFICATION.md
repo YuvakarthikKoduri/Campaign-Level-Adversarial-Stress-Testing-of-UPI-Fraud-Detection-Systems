@@ -33,7 +33,9 @@ An independent visual reviewer inspected all eight initial slide images and all 
 
 The source was revised, rebuilt, repaired and rendered again. Final visual reinspection checked the eight-slide contact sheet and the detailed results slide; the high-value-burst subset is now explicit, process arrows are stronger, text is larger and the two contribution columns align.
 
-PptxGenJS 4.0.1 generated the file. The Office OOXML repair applied 38 normalizations to the final build; the PDF passed `qpdf --check` with exit 0.
+PptxGenJS 4.0.1 generated the file. The Office OOXML repair normalized the generated package; the PDF passed `qpdf --check` with exit 0.
+
+The first attachment-quality check detected two overlapping source-citation text layers on slide 6, although the opaque top layer hid the duplicate in the visual render. The generator was corrected to create just one citation layer, then rebuilt and rendered again; the failed attempt remains in the execution history rather than being treated as a clean first pass.
 
 The final chart shows historical known/high-value-burst completion only, 72 campaigns per arm/detector across three seeds. Seed standard deviations are retained in speaker notes; no confidence intervals or causal advantage are claimed.
 

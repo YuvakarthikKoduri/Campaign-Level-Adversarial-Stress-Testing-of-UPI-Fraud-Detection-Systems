@@ -8,7 +8,7 @@ function box(s,p,t,x,y,w,h,fill="F0F4F3") {
   s.addShape(p.ShapeType.rect,{x,y,w,h,line:{color:"D7E0DE",width:.6},fill:{color:fill}});
   text(s,t,x+.16,y+.16,w-.32,h-.32,16);
 }
-function slide(p,t,n,title,type="content") {
+function slide(p,t,n,title,type="content",source=null) {
   const s=p.addSlide();s.background={color:t.bg};
   text(s,title,.5,.38,9,.95,34,t.primary,{bold:true,breakLine:false});
   if(n>1) {
@@ -18,7 +18,7 @@ function slide(p,t,n,title,type="content") {
   }
   text(s,"SYNTHETIC RESEARCH  |  GATE C HOLD",.5,5.1,4.6,.22,10,t.secondary);
   s.addText([{text:"Source: ",options:{color:t.secondary}},
-    {text:"prototype source and retained records",options:{color:t.accent,hyperlink:{url:repo+"/tree/prototype/rl-academic-complete"}}}],
+    {text:source ? source.label : "prototype source and retained records",options:{color:t.accent,hyperlink:{url:source ? source.url : repo+"/tree/prototype/rl-academic-complete"}}}],
     {x:.5,y:4.78,w:8.75,h:.22,fontFace:"Arial",fontSize:10,margin:0});
   s._reviewType=type;
   return s;
