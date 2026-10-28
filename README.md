@@ -1,400 +1,149 @@
 # UPI Fraud Stress Lab
 
-## Working academic RL prototype
+UPI Fraud Stress Lab is a Python research prototype for asking a practical question: **can a simulated attack campaign reach its transfer target before a fraud detector stops it?** It connects campaign generation, attacker decisions, a synthetic account ledger and two saved machine-learning detectors, then records the entire sequence for inspection.
 
-The separate development extension adds a tabular Q-learning attacker integrated
-with the existing campaign executor, both saved detectors, paired comparison
-experiments, checkpoint evaluation, transaction traces and SVG plots. Read
-[the prototype guide](docs/PROTOTYPE_GUIDE.md) for commands, definitions and
-limitations; see `PROTOTYPE_COMPLETION_REPORT.md` for executed evidence.
+This page describes **`prototype/rl-academic-complete`**, whose research-code baseline is `92a12966ec49fd6dcd147fd4d7411382715bc729`. It is a historical command-line prototype, not the later corrected dashboard and mechanism-holdout pilot; the documentation update does not backport those fixes.
 
-```sh
-python -B -s run_prototype.py --detector both --attacker all --seeds 101 \
-  --episodes 60 --campaigns 6 --output demo-short
+> This is a synthetic research environment. Results do not establish real-world UPI fraud-detection effectiveness, actual victim losses or money saved. Gate C remains HOLD.
+
+## The lecturer pitch
+
+Most detector summaries describe individual transactions. Our prototype instead runs a sequence: an attacker proposes transfers, the detector allows, flags or blocks them, and the simulator checks whether the campaign reaches its target. The useful engineering contribution is an inspectable connection between attacker behavior, intervention timing and simulated ledger effects, with saved policies and reproducible raw outputs. It is not a new detector algorithm, a first-ever learning attack or proof of real-world fraud prevention.
+
+The [eight-slide presentation](research/review_materials/UPI_PROTOTYPE_FACULTY_8_SLIDES.pptx) is editable in PowerPoint. Its [PDF preview](research/review_materials/UPI_PROTOTYPE_FACULTY_8_SLIDES.pdf) and [handover](docs/PROTOTYPE_FACULTY_HANDOVER.md) explain this exact branch rather than silently mixing later experiments into it.
+
+## What is implemented here?
+
+| Component | Actual prototype behavior |
+|---|---|
+| Detectors | Saved XGBoost and Random Forest models, reused for inference |
+| Workloads | HIGH_VALUE_BURST, SLOW_DRAIN, GRADUAL_ESCALATION and BENEFICIARY_HOPPING |
+| Static attacker | Family-specific behavior without detector-feedback adaptation |
+| Rule-adaptive attacker | Hand-written rules that respond to prior outcomes |
+| Trained RL attacker | Tabular Q-learning, with training before evaluation |
+| Zero-Q control | The same RL action vocabulary without learned Q values; CLI name `untrained_rl` |
+| Campaign execution | Targets, synthetic balances, pacing, ALLOW/FLAG/BLOCK decisions and stopping reasons |
+| Evidence | Campaign JSON, transaction CSV, summary tables, Q checkpoints, manifests and SVG plots |
+| Not on this branch | Local dashboard, label-blind RL arm, later matched pilot and later remediation fixes |
+
+RL means reinforcement learning. Here its small table has at most 64 state keys and 16 amount/pacing/recipient combinations; it is not a neural-network model or a claim of optimal learning.
+
+```text
+Campaign workload -> Attacker action -> Synthetic ledger + detector -> Recorded outcome
+                            ^                       |
+                            +---- public feedback --+
 ```
 
-This does not run or authorize the held Gate C pilot. The historical claims
-below are retained for context, not adopted as prototype validation evidence.
+The [prototype guide](docs/PROTOTYPE_GUIDE.md) contains the reward, state/action definition, stopping rules and output schema. Its historical claims and the old completion report must be interpreted with the version limitations below.
 
-**Campaign-Level Adversarial Stress Testing of UPI Fraud Detection Systems**
+## Install and run from a terminal
 
-## Corrected-v2 local repair status
-
-The correctness/reproducibility repairs are awaiting review, not a claim of
-production readiness or completed research evaluation. Read
-[the corrected-v2 contract](docs/MILESTONE1_CONTRACT.md) before interpreting results.
-
-New runs use paired immutable workloads, explicit simulated time, label-only
-feedback by default, and fresh output directories. FLAG transfers count as
-transferred exposure, invalid inputs are not detector blocks, and unobserved
-detection/intervention times are censored rather than zero.
-
-The tested runtime is Python 3.11 on Linux. The dedicated lock installs the
-execution/test dependencies without retraining or modifying existing models:
+Use Python 3.11 on Linux or WSL2. Native Windows execution is not established by the checks reported here; on Windows, open an Ubuntu/WSL terminal and follow these commands there.
 
 ```bash
-python3.11 -m venv .venv-m1
-. .venv-m1/bin/activate
-python -m pip install -r requirements-milestone1.lock
-python -m pytest . -v
-python run_experiment.py --scenario all --detector both \
-  --campaigns 6 --seed 999 --max-steps 30 \
-  --output-dir results/runs --run-id paired-review-a
-```
-
-A repeated run ID raises instead of overwriting. For repeatability use another
-run ID with identical semantic flags and compare `canonical.json`; manifests
-intentionally differ in actual timestamps and run identity.
-
-The existing XGBoost pickle emits a portability warning, which is not hidden.
-No original training environment, temporal/entity-held-out validation, or strict
-leave-one-family-out detector provenance has been established.
-
-## Legacy documentation and historical examples
-
-The sections below retain the original research narrative and historical numbers
-for context. They are not corrected-v2 results, the original “85% complete” and
-“29/29” claims are not current acceptance evidence, and the old unrestricted
-dependency instructions are not the supported reproducibility lock.
-
-## Overview
-
-This project evaluates the resilience of fraud detection systems under UPI-specific campaign-level scenarios involving previously unseen and strategically adaptive fraud behavior.
-
-Historical status claim: 85% complete. Current status is correctness repairs under review, with scientific evaluation still pending.
-
-## Key Features
-
-- ✅ **2 Baseline Detectors**: XGBoost (96.7% AUC) and Random Forest (96.3% AUC)
-- ✅ **4 Campaign Families**: HIGH_VALUE_BURST, SLOW_DRAIN, GRADUAL_ESCALATION, BENEFICIARY_HOPPING
-- ✅ **4 VPA Strategies**: Configurable source-VPA behavior for realistic velocity patterns
-- ✅ **3 Attacker Types**: Static, Adaptive, Family-based (GradualEscalation, BeneficiaryHopping)
-- ✅ **4 Scenarios**: S1-S4 (Known/Unknown × Static/Adaptive)
-- ✅ **Realistic Timing**: Campaign family-specific transaction timing models
-- ✅ **Campaign-Level Metrics**: Financial exposure, success rates, detection time
-- ✅ **Full Test Suite**: 29/29 tests passing (21 core + 8 VPA validation)
-- ✅ **Complete Documentation**: Validation reports for all major components
-
-## Quick Start
-
-### 1. Clone and Setup
-
-```bash
-# Clone repository
-git clone https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems.git
+git clone --branch prototype/rl-academic-complete --single-branch \
+  https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems.git
 cd Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-milestone1.lock
 
-# Install dependencies
-pip install -r requirements.txt
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export PYTHONHASHSEED=17 PYTHONDONTWRITEBYTECODE=1 TZ=UTC
+
+python -B -s run_prototype.py \
+  --detector both --attacker all --seeds 101 \
+  --episodes 2 --campaigns 1 \
+  --output demo-faculty-01
 ```
 
-### 2. Verify Setup
+This deliberately small demonstration evaluates 16 campaigns: two detectors, two workload groups and four attacker controls, with one campaign per cell. It trains two RL episodes per detector; it does not reproduce the retained full-study results and does not run Gate C.
+
+Use a **new output directory every time**. The program refuses to overwrite an existing run, so use `demo-faculty-02` for another attempt rather than deleting historical evidence.
+
+The short main/reload commands were newly exercised in an isolated checkout using the existing compatible Python environment. That is a verified execution path, not a new clean-install certification of every operating system.
+
+## What to open after a run
+
+| File in `demo-faculty-01/` | What it tells you |
+|---|---|
+| `summary.csv` / `summary.json` | Completion and other metrics by detector, workload group and strategy |
+| `campaigns.json` | Workload specifications, target, stopping reason and transaction-level records |
+| `transactions.csv` | Evaluated decisions and amounts in a flat table |
+| `comparison.svg` | Recorded comparison plots; open in a browser |
+| `learning.csv` / `learning.svg` | Training diagnostics, not a guarantee of better evaluation performance |
+| `q_*.json` | Saved policy state and configuration |
+| `manifest.json` / `config.json` | Model identifiers, software/configuration details and recorded update counts |
+
+Start with `summary.csv`, then pick a campaign in `campaigns.json` and follow its transaction rows. A FLAG can still transfer money in the simulator; a BLOCK stops the campaign.
+
+## Supported choices and checkpoint evaluation
+
+Run `python -B -s run_prototype.py --help` to inspect the actual CLI. Supported detector choices are `both`, `xgboost` and `random_forest`; attacker choices are `all`, `static`, `adaptive`, `rl` and `untrained_rl`.
 
 ```bash
-# Run test suite (should show 21/21 passing)
-pytest tests/test_core.py -v
+# Evaluate the saved policies without new training.
+# Keep seed, episode/configuration flags, horizon and thresholds consistent.
+python -B -s run_prototype.py \
+  --detector both --attacker all --seeds 101 \
+  --episodes 2 --campaigns 1 \
+  --policy-dir demo-faculty-01 --output demo-faculty-reload-01
 
-# Run VPA strategy tests (should show 8/8 passing)
-python test_vpa_strategies.py
+# Run just the trained policy with one detector, in a new directory.
+python -B -s run_prototype.py \
+  --detector xgboost --attacker rl --seeds 101 \
+  --episodes 2 --campaigns 1 --output demo-faculty-rl-01
 
-# Run timing validation tests
-python test_timing.py
+# Run the targeted existing RL regression selection.
+python -B -s -m pytest tests/test_prototype_rl.py -q
 ```
 
-**See [TEST_RUN_REPORT.md](TEST_RUN_REPORT.md) for a complete validated test run with detailed results.**
+Checkpoint reload repeats evaluation with a matching policy identity. The legacy reload manifest carries the original training update count; this inherited count is not evidence that reload trained again, and zero recorded evaluation updates does not by itself prove complete Q-table immutability in this older implementation.
 
-### 3. Run Experiments
+## Recorded results, with the version made explicit
+
+The preserved source for this table is `prototype_evidence/comparison-final/` on this branch. A new read-only calculation checked the campaign JSON against transaction and summary files; it did not rerun the full experiment.
 
 ```bash
-# Run single scenario
-python run_experiment.py --scenario S1 --detector xgboost --num_campaigns 30
-
-# Run all scenarios for one detector
-python run_experiment.py --detector xgboost --all
-
-# Run all scenarios for both detectors
-python run_experiment.py --detector xgboost --all
-python run_experiment.py --detector random_forest --all
-
-# Results saved to: results/xgboost/ and results/random_forest/
+# Recalculate retained records without training or running a new experiment.
+python -B scripts/recalculate_prototype_snapshot.py --output reviewer-prototype-check.json
 ```
 
-### 4. Explore Campaign Families
+| Historical prototype measure | Recalculated value |
+|---|---:|
+| Evaluated campaigns | 1,152 |
+| Completed campaigns | 1,077 |
+| Evaluated transactions | 4,189 |
+| ALLOW / FLAG / BLOCK | 3,229 / 885 / 75 |
+| Independent evaluation seeds | 3: 101, 202, 303 |
+| Gross simulated source debit | INR 29,196,913.14 |
 
-```bash
-# Test all campaign families
-python test_families.py
+Completion means reaching the declared transfer target before termination. Evaluated transactions are the recorded ALLOW/FLAG/BLOCK decisions; gross debit sums `amount_transferred` and includes FLAG transfers, not actual victim loss.
 
-# See realistic timing behavior
-python test_timing.py
-```
+These are **historical observations from the older implementation, not final validated scientific estimates**. In particular, do not substitute the later corrected legacy count of 4,161 transactions or the later pilot's 7,200 campaigns into this branch's table.
 
-## What's Included
+The later review branch contains decimal-money, evaluation-state and evidence-checking repairs, a separate matched pilot and its adverse benign-shift finding. Use that branch for the current academic package; do not interpret this README update as repairing this branch's research engine.
 
-### Pre-trained Models
-- `models/baseline_xgboost.pkl` (149 KB, 96.7% AUC)
-- `models/baseline_random_forest.pkl` (6.3 MB, 96.3% AUC)
+## Dashboard and current IEEE report
 
-### Dataset
-- `data/synthetic/upi_transactions_v1.csv` (1.3 MB, 50,000 transactions)
-- Realistic fraud/legitimate overlap (₹500-97K)
-- Features: amount, hour_of_day, velocity_1h, is_weekend
+The [complete review branch](https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems/tree/review/academic-dashboard-paper-v1) contains the local dashboard, corrected evidence, literature matrix and IEEE paper. It is a different implementation/evidence version, not an optional dashboard dependency you can start from this checkout.
 
-### Source Code
-```
-src/
-├── data/              # Data generation and processing
-├── detectors/         # Fraud detector implementations
-├── environment/       # UPI transaction simulator
-├── campaigns/         # Campaign generator with timing and VPA strategies
-├── attackers/         # Static, Adaptive, and Family-based attackers
-├── experiments/       # S1-S4 scenario runner
-└── visualization/     # Metrics and result analysis
-```
+To use the dashboard, make a **separate clone** with `--branch review/academic-dashboard-paper-v1`, follow that branch's README and run `python -B -s run_dashboard.py --port 8765` from its activated environment. Do not copy files between clones or expect `run_dashboard.py` to exist on this prototype branch.
 
-### Scripts
-- `run_experiment.py` - Main experiment runner (S1-S4)
-- `prepare_data.py` - Generate synthetic UPI transaction dataset
-- `train_upi_model.py` - Train XGBoost detector
-- `train_random_forest.py` - Train Random Forest detector
-- `test_families.py` - Validate campaign family behavior
-- `test_timing.py` - Validate realistic timing implementation
-- `test_vpa_strategies.py` - Validate VPA strategy framework
+The [IEEE PDF](https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems/blob/review/academic-dashboard-paper-v1/research/paper/main.pdf) and [LaTeX source/build instructions](https://github.com/YuvakarthikKoduri/Campaign-Level-Adversarial-Stress-Testing-of-UPI-Fraud-Detection-Systems/tree/review/academic-dashboard-paper-v1/research/paper) cover the later corrected study and pilot. The draft is AI-assisted; no skill or formatting step makes that text human-authored or establishes a zero AI-content score.
 
-### Documentation
-- `README.md` - This file (getting started guide)
-- `FINAL_VALIDATION_REPORT.md` - Complete validation summary (85% completion)
-- `SOURCE_VPA_STRATEGY_VALIDATION.md` - VPA strategy validation report
-- `REALISTIC_VELOCITY_VALIDATION.md` - Timing and velocity validation
-- `UPI_BASELINE_VALIDATION.md` - Detector baseline validation
-- `REPRODUCIBILITY_GUIDE.md` - Full reproducibility instructions
-- `DATASET.md` - Dataset documentation
+Both AI-content and similarity requirements remain **PENDING EXTERNAL VERIFICATION** using the university-approved tools on the exact final document. See [the report recheck and human-review steps](docs/IEEE_REPORT_STATUS.md); no measured score or threshold compliance is claimed.
 
-## Core Research Question
+## Limitations and troubleshooting
 
-> Can an existing fraud detector remain effective when an attacker uses previously unseen fraud behavior and changes its strategy based on the detector's responses?
+- **Unverified detector holdout:** Three workload families were excluded from RL training, not demonstrably from historical detector training. “Unknown” in older output files is a workload-group label, not proof of detector-unseen fraud.
+- **Confounded comparisons:** Action vocabularies, pacing, final-transfer clipping and offline training costs differ across legacy policies. Completion differences do not establish a causal adaptation advantage or universal RL superiority.
+- **Older evaluation implementation:** Later audits tightened frozen-policy equality, money handling and schema validation. A passing older suite is not proof that those later defects are absent here.
+- **No dashboard on this branch:** Use the separately identified review branch rather than trying an unsupported startup command.
+- **Model warning:** The old XGBoost pickle can emit a version/portability warning. Use the pinned environment and only trusted project model artifacts; never load an arbitrary pickle.
+- **Import or model-file errors:** Run commands from the repository root after activating the environment. Do not move the runner away from `src/`, `models/` or `data/`.
+- **Output already exists:** Pick a fresh output path instead of overwriting evidence.
+- **Historical AUC/test claims:** Old reports and Git history are preserved, but their AUC values, completion percentages and counts are not adopted as current acceptance evidence here.
 
-**Answer**: Depends on the scenario.
-- **S1 (Known + Static)**: Both detectors fail (100% attacker success)
-- **S2 (Known + Adaptive)**: XGBoost still vulnerable (96.7% success), Random Forest better (86.7%)
-- **S3 (Unknown + Static)**: Both catch most fraud (6.7-13.3% success)
-- **S4 (Unknown + Adaptive)**: Both fully effective (0% attacker success)
-
-## Architecture
-
-```
-Dataset → Detector → Environment → Campaign → Attacker → Adaptation → Metrics
-```
-
-**Campaign Flow**:
-1. **Campaign Generator** creates fraud campaign with family, timing model, and VPA strategy
-2. **Attacker** chooses transactions based on strategy (static/adaptive/family-based)
-3. **Environment** processes transactions and calculates features (velocity, etc.)
-4. **Detector** evaluates each transaction and returns risk score + decision
-5. **Attacker** observes feedback and adapts (if adaptive)
-6. **Metrics** track campaign-level outcomes (exposure, success rate, detection time)
-
-## Campaign Families
-
-### 1. HIGH_VALUE_BURST
-- **Behavior**: Large amounts, fast succession (2-5 min intervals)
-- **Timing Model**: Poisson-distributed intervals
-- **Use Case**: Compromised account, immediate extraction
-
-### 2. SLOW_DRAIN
-- **Behavior**: Moderate amounts, slow pace (30-60 min intervals)
-- **Timing Model**: Gaussian intervals with drift
-- **Use Case**: Avoiding velocity-based detection
-
-### 3. GRADUAL_ESCALATION
-- **Behavior**: Start small (₹500), increase 30% on success
-- **Timing Model**: 10-20 min intervals
-- **Attacker**: GradualEscalationAttacker (family-based)
-
-### 4. BENEFICIARY_HOPPING
-- **Behavior**: Rotate beneficiaries, limit reuse
-- **Timing Model**: 3-8 min intervals
-- **Attacker**: BeneficiaryHoppingAttacker (family-based)
-
-## VPA Strategies
-
-### 1. SINGLE_COMPROMISED_VPA
-- One source VPA for all transactions
-- **Velocity**: Highest (mean 0.82, max 3)
-- **Use**: S1, S2 (Known fraud)
-
-### 2. MIXED_REUSE
-- 70% primary VPA, 30% rotation
-- **Velocity**: Second-highest (mean 0.67, max 4)
-- **Use**: S3, S4 (Unknown fraud)
-
-### 3. SMALL_VPA_POOL
-- Rotate through 2-3 VPAs
-- **Velocity**: Low (mean 0.26, max 1)
-- **Use**: Coordinated fraud rings
-
-### 4. VPA_ROTATION
-- Random selection from large pool
-- **Velocity**: Zero (mean 0.00)
-- **Use**: Baseline comparison
-
-## Experimental Scenarios
-
-| Scenario | Fraud Type | Attacker | Campaign Families | Expected Outcome |
-|----------|------------|----------|-------------------|------------------|
-| **S1** | Known | Static | HIGH_VALUE_BURST, COORDINATED_STRIKE | High success (matches training) |
-| **S2** | Known | Adaptive | HIGH_VALUE_BURST, COORDINATED_STRIKE | High success + learning |
-| **S3** | Unknown | Static | SLOW_DRAIN, GRADUAL_ESCALATION, BENEFICIARY_HOPPING | Low success (unseen patterns) |
-| **S4** | Unknown | Adaptive | SLOW_DRAIN, GRADUAL_ESCALATION, BENEFICIARY_HOPPING | Lowest success (unseen + blocked) |
-
-## Test Coverage
-
-### Core Tests (21 tests)
-```
-tests/test_core.py:
-✓ TestDetectorLoading (3 tests)
-✓ TestCampaignGeneration (3 tests)
-✓ TestAttackerBehavior (4 tests)
-✓ TestEnvironment (3 tests)
-✓ TestCampaignExecution (2 tests)
-✓ TestMetrics (2 tests)
-✓ TestReproducibility (1 test)
-✓ TestEdgeCases (3 tests)
-```
-
-### VPA Strategy Tests (8 tests)
-```
-test_vpa_strategies.py:
-✓ SINGLE_COMPROMISED_VPA uses one source
-✓ SMALL_VPA_POOL uses 2-3 sources
-✓ VPA_ROTATION preserves diversity
-✓ MIXED_REUSE shows reuse + rotation
-✓ Velocity emerges from reuse
-✓ Velocity varies by strategy
-✓ Campaign isolation preserved
-✓ Seed reproducibility confirmed
-```
-
-## Advanced Usage
-
-### Custom Campaigns
-
-```python
-from src.campaigns.generator import CampaignGenerator
-from src.campaigns.vpa_strategy import VPAStrategy
-from src.campaigns.timing import CampaignFamily
-
-generator = CampaignGenerator()
-
-# Create custom campaign
-campaign = generator.create_known_fraud_campaign(
-    target_amount=50000,
-    vpa_strategy=VPAStrategy.SINGLE_COMPROMISED_VPA,
-    family=CampaignFamily.HIGH_VALUE_BURST
-)
-```
-
-### Running with Custom Seed
-
-```python
-from src.experiments.scenarios import run_scenario
-
-# Reproducible results
-results = run_scenario(
-    scenario="S1",
-    detector_type="xgboost",
-    num_campaigns=30,
-    seed=42  # Same seed = same results
-)
-```
-
-### Analyzing Results
-
-```python
-import json
-
-# Load experiment results
-with open('results/xgboost/s1_results.json') as f:
-    results = json.load(f)
-
-print(f"Success rate: {results['metrics']['success_rate']:.1%}")
-print(f"Avg exposure: ₹{results['metrics']['avg_financial_exposure']:,.0f}")
-print(f"Total campaigns: {results['metrics']['total_campaigns']}")
-```
-
-## Regenerating Data and Models
-
-If you want to regenerate from scratch:
-
-```bash
-# 1. Generate new synthetic dataset
-python prepare_data.py
-
-# 2. Train XGBoost detector
-python train_upi_model.py
-
-# 3. Train Random Forest detector
-python train_random_forest.py
-
-# 4. Validate detectors
-python rebuild_upi_baseline.py
-
-# 5. Run experiments
-python run_experiment.py --all
-```
-
-## Requirements
-
-- Python 3.8+
-- pandas, numpy, scikit-learn
-- xgboost
-- pytest (for testing)
-
-See `requirements.txt` for full dependency list.
-
-## Known Limitations
-
-### Campaign Velocity vs Training Velocity
-- Campaign velocity: mean 0.67-0.82 (individual episodes)
-- Training velocity: mean 3.76 (population aggregates)
-- Gap is expected due to temporal scale differences
-
-### Not Implemented
-- RL-based adversarial agents
-- GNN/LSTM detectors
-- Campaign-aware detection
-- Large-scale statistical validation (1000+ campaigns)
-- Production features (APIs, dashboards, real-time monitoring)
-
-These are enhancement opportunities, not core deficiencies.
-
-## Validation Reports
-
-- **FINAL_VALIDATION_REPORT.md**: Complete system validation at 85% completion
-- **SOURCE_VPA_STRATEGY_VALIDATION.md**: VPA strategy framework validation
-- **REALISTIC_VELOCITY_VALIDATION.md**: Campaign timing and velocity validation
-- **UPI_BASELINE_VALIDATION.md**: Detector baseline performance validation
-- **REPRODUCIBILITY_GUIDE.md**: Step-by-step reproducibility instructions
-
-## Citation
-
-If you use this work, please cite:
-
-```
-UPI Fraud Stress Lab: Campaign-Level Adversarial Stress Testing
-of UPI Fraud Detection Systems (2026)
-```
-
-## License
-
-Research prototype - not for production use.
-
----
-
-**Status**: ✅ 85% Complete | 29/29 Tests Passing | Ready for Research Use
-
-For questions or issues, see the validation reports in the repository root.
+Scientific validity extends only as far as the evidence and stated assumptions. This is an exploratory academic prototype, not a production detector, a real payment system or an authorized Gate C workflow.
